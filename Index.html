@@ -237,6 +237,7 @@
             border: none;
             border-radius: 10px;
             cursor: pointer;
+            margin-right: 0.5rem;
         }
 
         .friends-list {
@@ -269,6 +270,31 @@
         .friend-actions .remove-btn {
             background-color: var(--error-color);
             color: white;
+        }
+
+        /* Search Results */
+        .search-result {
+            background-color: var(--input-bg);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .search-result-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .search-result-actions button {
+            padding: 0.5rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            background-color: var(--accent-color);
+            color: var(--sidebar-color);
         }
 
         /* Notifications Tab */
@@ -547,6 +573,7 @@
         // Data structure for users
         const usersDB = 'chatAppUsers';
         const currentUserKey = 'chatAppCurrentUser';
+        const userIdIndexDB = 'chatAppUserIdIndex'; // New storage for ID to username mapping
         
         // BroadcastChannel for multi-tab sync
         const broadcastChannel = new BroadcastChannel('chatAppUpdates');
@@ -562,9 +589,23 @@
             return users ? JSON.parse(users) : {};
         }
 
+        // Get ID to username mapping
+        function getUserIdIndex() {
+            const index = localStorage.getItem(userIdIndexDB);
+            return index ? JSON.parse(index) : {};
+        }
+
         // Save all users to localStorage
         function saveAllUsers(users) {
             localStorage.setItem(usersDB, JSON.stringify(users));
+            
+            // Update the ID index
+            const index = {};
+            for (const username in users) {
+                index[users[username].id] = username;
+            }
+            localStorage.setItem(userIdIndexDB, JSON.stringify(index));
+            
             broadcastChannel.postMessage({type: 'dataUpdate'});
         }
 
@@ -596,6 +637,16 @@
             currentUser.lastActive = Date.now();
             users[currentUser.username] = currentUser;
             saveAllUsers(users);
+        }
+
+        // Find user by ID
+        function findUserById(userId) {
+            const index = getUserIdIndex();
+            const username = index[userId];
+            if (!username) return null;
+            
+            const users = getAllUsers();
+            return users[username] || null;
         }
 
         // Time ago function
@@ -664,16 +715,7 @@
             const currentUser = getCurrentUser();
             if (!currentUser) return {success: false, message: 'Not logged in'};
             
-            const users = getAllUsers();
-            let receiver = null;
-            
-            // Find user by ID
-            for (const username in users) {
-                if (users[username].id === receiverId) {
-                    receiver = users[username];
-                    break;
-                }
-            }
+            const receiver = findUserById(receiverId);
             
             if (!receiver) {
                 return {success: false, message: 'User not found'};
@@ -701,6 +743,7 @@
             }
             
             // Add notification to receiver
+            const users = getAllUsers();
             receiver.notifications.push({
                 type: 'friendRequest',
                 from: currentUser.username
@@ -935,7 +978,8 @@
                         <div class="friends-search">
                             <h2>Friends</h2>
                             <input type="text" id="friend-id-input" placeholder="Enter friend's ID">
-                            <button id="send-request-button">Send Friend Request</button>
+                            <button id="search-user-button">Search User</button>
+                            <div id="search-results" style="margin-top: 1rem;"></div>
                         </div>
                         <div class="friends-list" id="friends-list">
                             ${currentUser.friends.map(friend => {
@@ -959,16 +1003,51 @@
                         </div>
                     `;
                     
-                    document.getElementById('send-request-button').addEventListener('click', () => {
-                        const friendId = document.getElementById('friend-id-input').value;
-                        const result = sendFriendRequest(friendId);
+                    document.getElementById('search-user-button').addEventListener('click', () => {
+                        const friendId = document.getElementById('friend-id-input').value.trim();
+                        if (!friendId) {
+                            showToast('Please enter a user ID', 'error');
+                            return;
+                        }
                         
-                        if (result.success) {
-                            showToast('Friend request sent!');
-                            document.getElementById('friend-id-input').value = '';
-                            loadTab('friends');
+                        const user = findUserById(friendId);
+                        const resultsDiv = document.getElementById('search-results');
+                        
+                        if (user) {
+                            const isFriend = currentUser.friends.includes(user.username);
+                            const isBlocked = currentUser.blocked.includes(user.username);
+                            const isSelf = user.username === currentUser.username;
+                            
+                            let status = '';
+                            if (isFriend) status = ' (Already friends)';
+                            else if (isBlocked) status = ' (Blocked)';
+                            else if (isSelf) status = ' (You)';
+                            
+                            resultsDiv.innerHTML = `
+                                <div class="search-result">
+                                    <div class="search-result-info">
+                                        <span class="status-dot ${user.lastActive && (Date.now() - user.lastActive < 300000) ? 'online' : 'offline'}"></span>
+                                        <span>Found user: <strong>${user.username}</strong>${status}</span>
+                                    </div>
+                                    ${!isFriend && !isBlocked && !isSelf ? 
+                                        '<button class="search-result-actions" id="send-request-button">Send Friend Request</button>' : ''}
+                                </div>
+                            `;
+                            
+                            if (!isFriend && !isBlocked && !isSelf) {
+                                document.getElementById('send-request-button').addEventListener('click', () => {
+                                    const result = sendFriendRequest(user.id);
+                                    if (result.success) {
+                                        showToast('Friend request sent!');
+                                        resultsDiv.innerHTML = '';
+                                        document.getElementById('friend-id-input').value = '';
+                                    } else {
+                                        showToast(result.message, 'error');
+                                    }
+                                });
+                            }
                         } else {
-                            showToast(result.message, 'error');
+                            resultsDiv.innerHTML = '<div class="search-result">User not found</div>';
                         }
                     });
                     
