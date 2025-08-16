@@ -3,1462 +3,814 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChatApp</title>
+    <title>Neon Chat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-color: #1e1e2e;
-            --sidebar-color: #181825;
-            --text-color: #cdd6f4;
-            --accent-color: #5c6bc0;
-            --hover-color: #313244;
-            --success-color: #a6e3a1;
-            --error-color: #f38ba8;
-            --input-bg: #313244;
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --dark-color: #2d3436;
+            --light-color: #f5f6fa;
+            --success-color: #00b894;
+            --danger-color: #d63031;
+            --warning-color: #fdcb6e;
+            --info-color: #0984e3;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', sans-serif;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            line-height: 1.6;
         }
 
-        /* Scrollbar Styles */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--sidebar-color);
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--hover-color);
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--accent-color);
-        }
-
-        /* Auth Screen */
-        .auth-container {
+        /* Login Page */
+        .login-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            background-color: var(--bg-color);
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 20px;
         }
 
-        .auth-form {
-            background-color: var(--sidebar-color);
-            padding: 2rem;
-            border-radius: 20px;
+        .login-box {
+            background-color: white;
+            padding: 2.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
             width: 100%;
             max-width: 400px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .auth-form h2 {
-            margin-bottom: 1.5rem;
-            text-align: center;
-            color: var(--accent-color);
-        }
-
-        .auth-form input {
-            width: 100%;
-            padding: 0.75rem;
-            margin-bottom: 1rem;
-            border: none;
-            border-radius: 10px;
-            background-color: var(--input-bg);
-            color: var(--text-color);
-        }
-
-        .auth-form button {
-            width: 100%;
-            padding: 0.75rem;
-            background-color: var(--accent-color);
-            color: var(--sidebar-color);
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-bottom: 1rem;
-        }
-
-        .auth-form button:hover {
-            opacity: 0.9;
-        }
-
-        .auth-switch {
-            text-align: center;
-            color: var(--accent-color);
-            cursor: pointer;
-            margin-top: 1rem;
-        }
-
-        .error-message {
-            color: var(--error-color);
-            margin-bottom: 1rem;
-            text-align: center;
-        }
-
-        /* Main App */
-        .app-container {
-            display: none;
-            height: 100vh;
+            transform: translateY(0);
+            transition: var(--transition);
+            position: relative;
             overflow: hidden;
         }
 
-        .app-header {
-            background-color: var(--sidebar-color);
-            padding: 1rem;
+        .login-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .login-title {
             text-align: center;
-            font-weight: bold;
-            border-bottom: 1px solid var(--hover-color);
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            font-weight: 700;
         }
 
-        .app-content {
-            display: flex;
-            height: calc(100vh - 60px);
+        .input-group {
+            margin-bottom: 1.5rem;
+            position: relative;
         }
 
-        .sidebar {
-            width: 250px;
-            background-color: var(--sidebar-color);
-            border-right: 1px solid var(--hover-color);
-            padding: 1rem;
-            overflow-y: auto;
-        }
-
-        .sidebar-item {
-            padding: 0.75rem;
-            border-radius: 15px;
-            margin-bottom: 0.5rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-        }
-
-        .sidebar-item:hover {
-            background-color: var(--hover-color);
-        }
-
-        .sidebar-item.active {
-            background-color: var(--accent-color);
-            color: var(--sidebar-color);
-        }
-
-        .sidebar-item i {
-            margin-right: 0.5rem;
-        }
-
-        .main-content {
-            flex: 1;
-            padding: 1rem;
-            overflow-y: auto;
-        }
-
-        /* Profile Tab */
-        .profile-info {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .profile-info h2 {
-            margin-bottom: 1rem;
-            color: var(--accent-color);
-        }
-
-        .profile-field {
-            margin-bottom: 1rem;
-        }
-
-        .profile-field label {
+        .input-group label {
             display: block;
-            margin-bottom: 0.25rem;
-            color: var(--accent-color);
-        }
-
-        .profile-field input {
-            width: 100%;
-            padding: 0.5rem;
-            background-color: var(--input-bg);
-            border: none;
-            border-radius: 10px;
-            color: var(--text-color);
-        }
-
-        .copy-container {
-            display: flex;
-        }
-
-        .copy-btn {
-            margin-left: 0.5rem;
-            background-color: var(--accent-color);
-            color: var(--sidebar-color);
-            border: none;
-            border-radius: 10px;
-            padding: 0.5rem;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-
-        /* Friends Tab */
-        .friends-search {
-            margin-bottom: 1rem;
-        }
-
-        .friends-search input {
-            width: 100%;
-            padding: 0.5rem;
-            background-color: var(--input-bg);
-            border: none;
-            border-radius: 10px;
-            color: var(--text-color);
             margin-bottom: 0.5rem;
+            color: var(--dark-color);
+            font-weight: 500;
         }
 
-        .friends-search button {
-            padding: 0.5rem 1rem;
-            background-color: var(--accent-color);
-            color: var(--sidebar-color);
-            border: none;
-            border-radius: 10px;
+        .input-group input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+            padding-right: 2.5rem;
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+        }
+
+        .input-group .input-icon {
+            position: absolute;
+            right: 1rem;
+            top: 2.5rem;
+            color: var(--primary-color);
             cursor: pointer;
-            margin-right: 0.5rem;
         }
 
-        .friends-list {
+        .login-btn {
+            width: 100%;
+            padding: 0.8rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
             margin-top: 1rem;
         }
 
-        .friend-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem;
-            background-color: var(--input-bg);
-            border-radius: 15px;
-            margin-bottom: 0.5rem;
+        .login-btn:hover {
+            background-color: #5a4bd1;
+            transform: translateY(-2px);
         }
 
-        .friend-actions button {
-            margin-left: 0.5rem;
-            padding: 0.25rem 0.5rem;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-        }
-
-        .friend-actions .chat-btn {
-            background-color: var(--accent-color);
-            color: var(--sidebar-color);
-        }
-
-        .friend-actions .remove-btn {
-            background-color: var(--error-color);
-            color: white;
-        }
-
-        /* Search Results */
-        .search-result {
-            background-color: var(--input-bg);
-            padding: 1rem;
-            border-radius: 10px;
-            margin-bottom: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .search-result-info {
-            display: flex;
-            align-items: center;
-        }
-
-        .search-result-actions button {
-            padding: 0.5rem;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            background-color: var(--accent-color);
-            color: var(--sidebar-color);
-        }
-
-        /* Notifications Tab */
-        .notification-item {
-            padding: 0.75rem;
-            background-color: var(--input-bg);
-            border-radius: 15px;
-            margin-bottom: 0.5rem;
-        }
-
-        .notification-message {
-            margin-bottom: 0.5rem;
-        }
-
-        .notification-actions button {
-            margin-right: 0.5rem;
-            padding: 0.25rem 0.5rem;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-        }
-
-        .notification-actions .accept-btn {
-            background-color: var(--success-color);
-            color: var(--sidebar-color);
-        }
-
-        .notification-actions .block-btn {
-            background-color: var(--error-color);
-            color: white;
-        }
-
-        .notification-actions .dismiss-btn {
-            background-color: var(--input-bg);
-            color: var(--text-color);
-            border: 1px solid var(--text-color);
-        }
-
-        /* Chat Tab */
+        /* Chat Page */
         .chat-container {
-            display: flex;
-            height: calc(100vh - 120px);
-        }
-
-        .chat-friends {
-            width: 250px;
-            border-right: 1px solid var(--hover-color);
-            overflow-y: auto;
-            padding-right: 1rem;
-        }
-
-        .chat-messages {
-            flex: 1;
-            padding: 0 1rem;
-            overflow-y: auto;
-            display: flex;
+            display: none;
+            height: 100vh;
+            background-color: var(--light-color);
             flex-direction: column;
         }
 
-        .chat-friend-item {
+        .chat-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1rem 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: var(--shadow);
+            z-index: 100;
+        }
+
+        .chat-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: white;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .chat-main {
+            display: flex;
+            height: calc(100vh - 64px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background-color: white;
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 1rem;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .user-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0.5rem;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
             padding: 0.75rem;
-            border-radius: 15px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
             margin-bottom: 0.5rem;
-            cursor: pointer;
         }
 
-        .chat-friend-item:hover {
-            background-color: var(--hover-color);
+        .user-item:hover {
+            background-color: #f0e6ff;
         }
 
-        .chat-friend-item.active {
-            background-color: var(--accent-color);
-            color: var(--sidebar-color);
+        .user-item.active {
+            background-color: #e6e0ff;
         }
 
-        .chat-friend-actions button {
-            margin-left: 0.5rem;
-            padding: 0.25rem 0.5rem;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 0.8rem;
-        }
-
-        .chat-friend-actions .block-btn {
-            background-color: var(--error-color);
+        .user-item-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
             color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 0.75rem;
         }
 
-        .chat-friend-actions .delete-chat-btn {
-            background-color: var(--hover-color);
-            color: var(--text-color);
+        .user-item-name {
+            font-weight: 500;
+        }
+
+        .user-item-status {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--success-color);
+            margin-left: auto;
+        }
+
+        /* Chat Area */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .messages {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            background-color: #f8f9fa;
         }
 
         .message {
+            margin-bottom: 1rem;
             max-width: 70%;
-            padding: 0.75rem;
-            border-radius: 20px;
-            margin-bottom: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: var(--border-radius);
+            position: relative;
+            animation: messageIn 0.3s ease;
+        }
+
+        @keyframes messageIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .sent {
+            background-color: var(--primary-color);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+
+        .received {
+            background-color: white;
+            color: var(--dark-color);
+            margin-right: auto;
+            border-bottom-left-radius: 5px;
+            box-shadow: var(--shadow);
+        }
+
+        .message-sender {
+            font-weight: 600;
+            font-size: 0.8rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .received .message-sender {
+            color: var(--primary-color);
+        }
+
+        .message-content {
             word-wrap: break-word;
+            font-size: 0.95rem;
         }
 
-        .message-outgoing {
-            align-self: flex-end;
-            background-color: var(--accent-color);
-            color: var(--sidebar-color);
-        }
-
-        .message-incoming {
-            align-self: flex-start;
-            background-color: var(--input-bg);
-        }
-
-        .timestamp {
-            display: block;
-            font-size: 0.7em;
+        .message-time {
+            font-size: 0.7rem;
+            opacity: 0.8;
             text-align: right;
-            margin-top: 0.5em;
-            opacity: 0.7;
+            margin-top: 0.25rem;
         }
 
         .date-separator {
             text-align: center;
-            margin: 1rem 0;
-            color: var(--hover-color);
-            font-size: 0.8em;
+            margin: 1.5rem 0;
+            position: relative;
+            color: var(--dark-color);
+            font-size: 0.8rem;
         }
 
-        .chat-input {
+        .date-separator::before, .date-separator::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 40%;
+            height: 1px;
+            background-color: #ddd;
+        }
+
+        .date-separator::before {
+            left: 0;
+        }
+
+        .date-separator::after {
+            right: 0;
+        }
+
+        .date-separator span {
+            background-color: #f8f9fa;
+            padding: 0 0.75rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .input-area {
+            padding: 1rem;
+            background-color: white;
+            border-top: 1px solid #e0e0e0;
             display: flex;
-            margin-top: auto;
-            padding: 1rem 0;
+            align-items: center;
         }
 
-        .chat-input input {
+        .message-input {
             flex: 1;
-            padding: 0.75rem;
-            background-color: var(--input-bg);
-            border: none;
-            border-radius: 10px;
-            color: var(--text-color);
-            margin-right: 0.5rem;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+            resize: none;
+            height: 50px;
+            max-height: 120px;
         }
 
-        .chat-input button {
-            padding: 0.75rem 1.5rem;
-            background-color: var(--accent-color);
-            color: var(--sidebar-color);
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
+        .message-input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
         }
 
-        /* Status Dots */
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 0.5rem;
-        }
-
-        .online {
-            background-color: green;
-        }
-
-        .offline {
-            background-color: red;
-        }
-
-        /* Toast */
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            padding: 1rem 2rem;
-            border-radius: 10px;
+        .send-btn {
+            background-color: var(--primary-color);
             color: white;
-            z-index: 1000;
-            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            margin-left: 0.75rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.1rem;
         }
 
-        .toast.success {
-            background-color: var(--success-color);
-            color: var(--sidebar-color);
+        .send-btn:hover {
+            background-color: #5a4bd1;
+            transform: scale(1.05);
         }
 
-        .toast.error {
-            background-color: var(--error-color);
+        .typing-indicator {
+            font-size: 0.8rem;
+            color: #666;
+            margin-left: 1rem;
+            font-style: italic;
+            height: 20px;
         }
 
-        @keyframes fadein {
-            from { bottom: 0; opacity: 0; }
-            to { bottom: 20px; opacity: 1; }
-        }
-
-        @keyframes fadeout {
-            from { bottom: 20px; opacity: 1; }
-            to { bottom: 0; opacity: 0; }
-        }
-
-        /* Responsive */
+        /* Responsive Styles */
         @media (max-width: 768px) {
-            .app-content {
-                flex-direction: column;
+            .login-box {
+                padding: 1.5rem;
             }
 
             .sidebar {
-                width: 100%;
-                height: auto;
-                border-right: none;
-                border-bottom: 1px solid var(--hover-color);
+                position: absolute;
+                height: calc(100vh - 64px);
+                z-index: 100;
+                transform: translateX(-100%);
             }
 
-            .chat-container {
-                flex-direction: column;
-                height: auto;
+            .sidebar.open {
+                transform: translateX(0);
             }
 
-            .chat-friends {
-                width: 100%;
-                border-right: none;
-                border-bottom: 1px solid var(--hover-color);
-                margin-bottom: 1rem;
-                padding-bottom: 1rem;
+            .message {
+                max-width: 85%;
             }
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .pulse {
+            animation: pulse 1.5s infinite;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--secondary-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-color);
         }
     </style>
 </head>
 <body>
-    <!-- Auth Screen -->
-    <div class="auth-container" id="auth-container">
-        <div class="auth-form">
-            <h2 id="auth-title">Login</h2>
-            <div class="error-message" id="error-message"></div>
-            <input type="text" id="username" placeholder="Username">
-            <input type="password" id="password" placeholder="Password">
-            <button id="auth-button">Login</button>
-            <div class="auth-switch" id="auth-switch">Don't have an account? Register</div>
+    <!-- Login Page -->
+    <div class="login-container" id="loginPage">
+        <div class="login-box">
+            <h1 class="login-title">Neon Chat</h1>
+            <div class="input-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" placeholder="Enter your username">
+                <i class="fas fa-user input-icon"></i>
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Enter your password">
+                <i class="fas fa-eye input-icon" id="togglePassword"></i>
+            </div>
+            <button class="login-btn" id="loginBtn">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </button>
         </div>
     </div>
-
-    <!-- Main App -->
-    <div class="app-container" id="app-container">
-        <div class="app-header">
-            ChatApp
+    
+    <!-- Chat Page -->
+    <div class="chat-container" id="chatPage">
+        <div class="chat-header">
+            <div class="chat-title">Neon Chat</div>
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <span id="currentUsername">User</span>
+            </div>
         </div>
-        <div class="app-content">
-            <div class="sidebar">
-                <div class="sidebar-item" data-tab="profile">
-                    <i>👤</i> Profile
+        <div class="chat-main">
+            <div class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <div class="sidebar-title">Active Users</div>
                 </div>
-                <div class="sidebar-item" data-tab="chat">
-                    <i>💬</i> Chat
-                </div>
-                <div class="sidebar-item" data-tab="friends">
-                    <i>👥</i> Friends
-                </div>
-                <div class="sidebar-item" data-tab="notifications">
-                    <i>🔔</i> Notifications
-                </div>
-                <div class="sidebar-item" id="logout-button">
-                    <i>🚪</i> Logout
+                <div class="user-list" id="userList">
+                    <!-- Users will be populated here -->
                 </div>
             </div>
-            <div class="main-content" id="main-content">
-                <!-- Content will be loaded here based on tab selection -->
+            <div class="chat-area">
+                <div class="messages" id="messages">
+                    <div class="welcome-message">
+                        <p>Welcome to Neon Chat! Select a user to start chatting.</p>
+                    </div>
+                </div>
+                <div class="input-area">
+                    <textarea class="message-input" id="messageInput" placeholder="Type a message..." disabled></textarea>
+                    <div class="typing-indicator" id="typingIndicator"></div>
+                    <button class="send-btn" id="sendBtn" disabled>
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Data structure for users
-        const usersDB = 'chatAppUsers';
-        const currentUserKey = 'chatAppCurrentUser';
-        const userIdIndexDB = 'chatAppUserIdIndex';
+        // DOM Elements
+        const loginPage = document.getElementById('loginPage');
+        const chatPage = document.getElementById('chatPage');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const togglePassword = document.getElementById('togglePassword');
+        const loginBtn = document.getElementById('loginBtn');
+        const sidebar = document.getElementById('sidebar');
+        const userList = document.getElementById('userList');
+        const messagesContainer = document.getElementById('messages');
+        const messageInput = document.getElementById('messageInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const currentUsername = document.getElementById('currentUsername');
+        const userAvatar = document.getElementById('userAvatar');
+        const typingIndicator = document.getElementById('typingIndicator');
+
+        // Application State
+        let currentUser = '';
+        let selectedUser = null;
+        let chatHistory = {};
+        let typingTimeout = null;
         
-        // BroadcastChannel for multi-tab sync
-        const broadcastChannel = new BroadcastChannel('chatAppUpdates');
-
-        // Generate a 20-digit unique ID
-        function generateId() {
-            return Array.from({length: 20}, () => Math.floor(Math.random() * 10)).join('');
-        }
-
-        // Get all users from localStorage
-        function getAllUsers() {
-            const users = localStorage.getItem(usersDB);
-            return users ? JSON.parse(users) : {};
-        }
-
-        // Get ID to username mapping
-        function getUserIdIndex() {
-            const index = localStorage.getItem(userIdIndexDB);
-            return index ? JSON.parse(index) : {};
-        }
-
-        // Save all users to localStorage
-        function saveAllUsers(users) {
-            localStorage.setItem(usersDB, JSON.stringify(users));
+        // Mock database (in a real app, this would be server-side)
+        const usersDatabase = {
+            'user1': { password: 'password1', name: 'User One', avatar: 'U1', online: true },
+            'user2': { password: 'password2', name: 'User Two', avatar: 'U2', online: true },
+            'admin': { password: 'admin123', name: 'Admin', avatar: 'AD', online: false }
+        };
+        
+        // Initialize chat history for each user pair
+        function initializeChatHistory() {
+            const userPairs = [
+                ['user1', 'user2'],
+                ['user1', 'admin'],
+                ['user2', 'admin']
+            ];
             
-            // Update the ID index
-            const index = {};
-            for (const username in users) {
-                if (users[username].id) {  // Ensure user has an ID
-                    index[users[username].id] = username;
+            userPairs.forEach(pair => {
+                const key = pair.sort().join('_');
+                if (!chatHistory[key]) {
+                    chatHistory[key] = JSON.parse(localStorage.getItem(`chat_${key}`)) || [];
                 }
-            }
-            localStorage.setItem(userIdIndexDB, JSON.stringify(index));
-            
-            broadcastChannel.postMessage({type: 'dataUpdate'});
-        }
-
-        // Get current user from localStorage
-        function getCurrentUser() {
-            const username = localStorage.getItem(currentUserKey);
-            if (!username) return null;
-            
-            const users = getAllUsers();
-            return users[username] || null;
-        }
-
-        // Set current user in localStorage
-        function setCurrentUser(username) {
-            localStorage.setItem(currentUserKey, username);
-        }
-
-        // Clear current user (logout)
-        function clearCurrentUser() {
-            localStorage.removeItem(currentUserKey);
-        }
-
-        // Update last active
-        function updateLastActive() {
-            const currentUser = getCurrentUser();
-            if (!currentUser) return;
-            
-            const users = getAllUsers();
-            currentUser.lastActive = Date.now();
-            users[currentUser.username] = currentUser;
-            saveAllUsers(users);
-        }
-
-        // Find user by ID (updated to handle missing users better)
-        function findUserById(userId) {
-            try {
-                const index = getUserIdIndex();
-                const username = index[userId];
-                if (!username) return null;
-                
-                const users = getAllUsers();
-                return users[username] || null;
-            } catch (e) {
-                console.error("Error finding user by ID:", e);
-                return null;
-            }
-        }
-
-        // Rebuild user ID index if it gets corrupted
-        function rebuildUserIdIndex() {
-            const users = getAllUsers();
-            const index = {};
-            for (const username in users) {
-                if (users[username].id) {
-                    index[users[username].id] = username;
-                }
-            }
-            localStorage.setItem(userIdIndexDB, JSON.stringify(index));
-            return index;
-        }
-
-        // Time ago function
-        function timeAgo(timestamp) {
-            if (!timestamp) return 'never';
-            const seconds = Math.floor((Date.now() - timestamp) / 1000);
-            let interval = seconds / 31536000;
-            if (interval > 1) return Math.floor(interval) + " years ago";
-            interval = seconds / 2592000;
-            if (interval > 1) return Math.floor(interval) + " months ago";
-            interval = seconds / 86400;
-            if (interval > 1) return Math.floor(interval) + " days ago";
-            interval = seconds / 3600;
-            if (interval > 1) return Math.floor(interval) + " hours ago";
-            interval = seconds / 60;
-            if (interval > 1) return Math.floor(interval) + " minutes ago";
-            return "just now";
-        }
-
-        // Register a new user (updated to ensure ID is always set)
-        function register(username, password) {
-            const users = getAllUsers();
-            
-            if (users[username]) {
-                return {success: false, message: 'Username already exists'};
-            }
-            
-            // Ensure we have a valid ID
-            let userId = generateId();
-            while (findUserById(userId)) {  // Ensure ID is unique
-                userId = generateId();
-            }
-            
-            users[username] = {
-                username,
-                password,
-                id: userId,
-                friends: [],
-                blocked: [],
-                chats: {},
-                notifications: [],
-                lastActive: Date.now()
-            };
-            
-            saveAllUsers(users);
-            return {success: true};
-        }
-
-        // Login a user
-        function login(username, password) {
-            const users = getAllUsers();
-            const user = users[username];
-            
-            if (!user) {
-                return {success: false, message: 'User not found'};
-            }
-            
-            if (user.password !== password) {
-                return {success: false, message: 'Incorrect password'};
-            }
-            
-            user.lastActive = Date.now();
-            users[username] = user;
-            saveAllUsers(users);
-            setCurrentUser(username);
-            return {success: true};
-        }
-
-        // Send a friend request (updated with better error handling)
-        function sendFriendRequest(receiverId) {
-            try {
-                const currentUser = getCurrentUser();
-                if (!currentUser) return {success: false, message: 'Not logged in'};
-                
-                let receiver = findUserById(receiverId);
-                
-                if (!receiver) {
-                    // Try to rebuild index in case it's corrupted
-                    rebuildUserIdIndex();
-                    const receiverRetry = findUserById(receiverId);
-                    if (!receiverRetry) {
-                        return {success: false, message: 'User not found'};
-                    }
-                    receiver = receiverRetry;
-                }
-                
-                if (receiver.username === currentUser.username) {
-                    return {success: false, message: 'Cannot add yourself'};
-                }
-                
-                if (currentUser.friends.includes(receiver.username)) {
-                    return {success: false, message: 'Already friends'};
-                }
-                
-                if (currentUser.blocked.includes(receiver.username)) {
-                    return {success: false, message: 'User is blocked'};
-                }
-                
-                // Check if request already exists
-                const existingRequest = receiver.notifications.find(
-                    n => n.type === 'friendRequest' && n.from === currentUser.username
-                );
-                
-                if (existingRequest) {
-                    return {success: false, message: 'Request already sent'};
-                }
-                
-                // Add notification to receiver
-                const users = getAllUsers();
-                receiver.notifications.push({
-                    type: 'friendRequest',
-                    from: currentUser.username,
-                    timestamp: new Date().toISOString()
-                });
-                
-                users[receiver.username] = receiver;
-                saveAllUsers(users);
-                updateLastActive();
-                
-                return {success: true};
-            } catch (e) {
-                console.error("Error sending friend request:", e);
-                return {success: false, message: 'An error occurred'};
-            }
-        }
-
-        // Handle friend request response
-        function handleFriendRequest(fromUsername, action) {
-            const currentUser = getCurrentUser();
-            if (!currentUser) return {success: false, message: 'Not logged in'};
-            
-            const users = getAllUsers();
-            const sender = users[fromUsername];
-            
-            if (!sender) {
-                return {success: false, message: 'User not found'};
-            }
-            
-            // Remove the notification
-            currentUser.notifications = currentUser.notifications.filter(
-                n => !(n.type === 'friendRequest' && n.from === fromUsername)
-            );
-            
-            if (action === 'accept') {
-                if (currentUser.blocked.includes(fromUsername)) {
-                    return {success: false, message: 'Cannot accept blocked user'};
-                }
-                // Add each other as friends if not already
-                if (!currentUser.friends.includes(fromUsername)) {
-                    currentUser.friends.push(fromUsername);
-                }
-                
-                if (!sender.friends.includes(currentUser.username)) {
-                    sender.friends.push(currentUser.username);
-                }
-                
-                // Initialize chat if it doesn't exist
-                if (!currentUser.chats[fromUsername]) {
-                    currentUser.chats[fromUsername] = [];
-                }
-                
-                if (!sender.chats[currentUser.username]) {
-                    sender.chats[currentUser.username] = [];
-                }
-            } else if (action === 'block') {
-                if (!currentUser.blocked.includes(fromUsername)) {
-                    currentUser.blocked.push(fromUsername);
-                }
-            }
-            // For dismiss, just remove notification
-            
-            // Update both users
-            users[currentUser.username] = currentUser;
-            users[fromUsername] = sender;
-            saveAllUsers(users);
-            updateLastActive();
-            
-            return {success: true};
-        }
-
-        // Send a message to a friend
-        function sendMessage(friendUsername, messageText) {
-            const currentUser = getCurrentUser();
-            if (!currentUser) return {success: false, message: 'Not logged in'};
-            
-            const users = getAllUsers();
-            const friend = users[friendUsername];
-            
-            if (!friend) {
-                return {success: false, message: 'Friend not found'};
-            }
-            
-            if (!currentUser.friends.includes(friendUsername)) {
-                return {success: false, message: 'Not friends'};
-            }
-            
-            if (currentUser.blocked.includes(friendUsername)) {
-                return {success: false, message: 'User is blocked'};
-            }
-            
-            // Add message to current user's chat
-            if (!currentUser.chats[friendUsername]) {
-                currentUser.chats[friendUsername] = [];
-            }
-            
-            currentUser.chats[friendUsername].push({
-                from: currentUser.username,
-                text: messageText,
-                timestamp: new Date().toISOString()
             });
-            
-            // Add message to friend's chat
-            if (!friend.chats[currentUser.username]) {
-                friend.chats[currentUser.username] = [];
-            }
-            
-            friend.chats[currentUser.username].push({
-                from: currentUser.username,
-                text: messageText,
-                timestamp: new Date().toISOString()
-            });
-            
-            // Update both users
-            users[currentUser.username] = currentUser;
-            users[friendUsername] = friend;
-            saveAllUsers(users);
-            updateLastActive();
-            
-            return {success: true};
         }
-
-        // Block a user
-        function blockUser(friendUsername) {
-            const currentUser = getCurrentUser();
-            if (!currentUser) return;
+        
+        // Toggle password visibility
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+        
+        // Login functionality
+        loginBtn.addEventListener('click', function() {
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
             
-            const users = getAllUsers();
-            const friend = users[friendUsername];
-            
-            if (!friend) return;
-            
-            if (!currentUser.blocked.includes(friendUsername)) {
-                currentUser.blocked.push(friendUsername);
-            }
-            
-            // Remove from friends
-            currentUser.friends = currentUser.friends.filter(f => f !== friendUsername);
-            friend.friends = friend.friends.filter(f => f !== currentUser.username);
-            
-            users[currentUser.username] = currentUser;
-            users[friendUsername] = friend;
-            saveAllUsers(users);
-            updateLastActive();
-        }
-
-        // Delete chat
-        function deleteChat(friendUsername) {
-            const currentUser = getCurrentUser();
-            if (!currentUser) return;
-            
-            const users = getAllUsers();
-            const friend = users[friendUsername];
-            
-            if (!friend) return;
-            
-            currentUser.chats[friendUsername] = [];
-            friend.chats[currentUser.username] = [];
-            
-            users[currentUser.username] = currentUser;
-            users[friendUsername] = friend;
-            saveAllUsers(users);
-            updateLastActive();
-        }
-
-        // Show toast
-        function showToast(message, type = 'success') {
-            const toast = document.createElement('div');
-            toast.classList.add('toast', type);
-            toast.textContent = message;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
-        }
-
-        // UI Functions
-        function showAuthScreen() {
-            document.getElementById('auth-container').style.display = 'flex';
-            document.getElementById('app-container').style.display = 'none';
-            clearCurrentUser();
-        }
-
-        function showAppScreen() {
-            document.getElementById('auth-container').style.display = 'none';
-            document.getElementById('app-container').style.display = 'block';
-            loadTab('profile');
-        }
-
-        function loadTab(tabName) {
-            const mainContent = document.getElementById('main-content');
-            const currentUser = getCurrentUser();
-            
-            if (!currentUser) {
-                showAuthScreen();
+            if (!username || !password) {
+                alert('Please enter both username and password');
                 return;
             }
             
-            updateLastActive();
+            if (usersDatabase[username] && usersDatabase[username].password === password) {
+                currentUser = username;
+                currentUsername.textContent = usersDatabase[username].name;
+                userAvatar.textContent = usersDatabase[username].avatar;
+                
+                // Mark user as online
+                usersDatabase[username].online = true;
+                
+                loginPage.style.display = 'none';
+                chatPage.style.display = 'flex';
+                
+                initializeChatHistory();
+                populateUserList();
+            } else {
+                alert('Invalid username or password');
+            }
+        });
+        
+        // Allow login with Enter key
+        passwordInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                loginBtn.click();
+            }
+        });
+        
+        // Populate user list
+        function populateUserList() {
+            userList.innerHTML = '';
             
-            // Update active tab in sidebar
-            document.querySelectorAll('.sidebar-item').forEach(item => {
-                item.classList.remove('active');
-                if (item.dataset.tab === tabName) {
-                    item.classList.add('active');
+            Object.keys(usersDatabase).forEach(username => {
+                if (username !== currentUser) {
+                    const user = usersDatabase[username];
+                    const userItem = document.createElement('div');
+                    userItem.className = 'user-item';
+                    userItem.innerHTML = `
+                        <div class="user-item-avatar">${user.avatar}</div>
+                        <div class="user-item-name">${user.name}</div>
+                        <div class="user-item-status ${user.online ? 'online' : 'offline'}"></div>
+                    `;
+                    
+                    userItem.addEventListener('click', () => {
+                        // Remove active class from all users
+                        document.querySelectorAll('.user-item').forEach(item => {
+                            item.classList.remove('active');
+                        });
+                        
+                        // Add active class to selected user
+                        userItem.classList.add('active');
+                        
+                        // Set selected user
+                        selectedUser = username;
+                        
+                        // Enable message input
+                        messageInput.disabled = false;
+                        sendBtn.disabled = false;
+                        
+                        // Load chat history
+                        loadChatHistory(currentUser, selectedUser);
+                    });
+                    
+                    userList.appendChild(userItem);
                 }
             });
-            
-            const users = getAllUsers();
-            
-            switch (tabName) {
-                case 'profile':
-                    mainContent.innerHTML = `
-                        <div class="profile-info">
-                            <h2>Profile</h2>
-                            <div class="profile-field">
-                                <label>Username</label>
-                                <input type="text" value="${currentUser.username}" readonly>
-                            </div>
-                            <div class="profile-field">
-                                <label>User ID</label>
-                                <div class="copy-container">
-                                    <input type="text" value="${currentUser.id}" readonly>
-                                    <button class="copy-btn" data-copy="${currentUser.id}">📋</button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    document.querySelectorAll('.copy-btn').forEach(btn => {
-                        btn.addEventListener('click', () => {
-                            navigator.clipboard.writeText(btn.dataset.copy);
-                            showToast('Copied to clipboard!');
-                        });
-                    });
-                    break;
-                    
-                case 'friends':
-                    mainContent.innerHTML = `
-                        <div class="friends-search">
-                            <h2>Friends</h2>
-                            <input type="text" id="friend-id-input" placeholder="Enter friend's ID">
-                            <button id="search-user-button">Search User</button>
-                            <div id="search-results" style="margin-top: 1rem;"></div>
-                        </div>
-                        <div class="friends-list" id="friends-list">
-                            ${currentUser.friends.map(friend => {
-                                const friendUser = users[friend] || {};
-                                const diff = Date.now() - (friendUser.lastActive || 0);
-                                const isOnline = diff < 300000;
-                                const statusTitle = isOnline ? 'Online' : `Last seen ${timeAgo(friendUser.lastActive)}`;
-                                return `
-                                    <div class="friend-item">
-                                        <span title="${statusTitle}">
-                                            <span class="status-dot ${isOnline ? 'online' : 'offline'}"></span>
-                                            ${friend}
-                                        </span>
-                                        <div class="friend-actions">
-                                            <button class="chat-btn" data-friend="${friend}">Chat</button>
-                                            <button class="remove-btn" data-friend="${friend}">Remove</button>
-                                        </div>
-                                    </div>
-                                `;
-                            }).join('') || '<p>No friends yet. Add some!</p>'}
-                        </div>
-                    `;
-                    
-                    document.getElementById('search-user-button').addEventListener('click', () => {
-                        const friendId = document.getElementById('friend-id-input').value.trim();
-                        if (!friendId) {
-                            showToast('Please enter a user ID', 'error');
-                            return;
-                        }
-                        
-                        let user = findUserById(friendId);
-                        const resultsDiv = document.getElementById('search-results');
-                        
-                        if (!user) {
-                            // Try rebuilding index and searching again
-                            rebuildUserIdIndex();
-                            user = findUserById(friendId);
-                            if (!user) {
-                                resultsDiv.innerHTML = '<div class="search-result">User not found. Make sure you entered the correct ID.</div>';
-                                return;
-                            }
-                        }
-
-                        const isFriend = currentUser.friends.includes(user.username);
-                        const isBlocked = currentUser.blocked.includes(user.username);
-                        const isSelf = user.username === currentUser.username;
-                        
-                        let status = '';
-                        if (isFriend) status = ' (Already friends)';
-                        else if (isBlocked) status = ' (Blocked)';
-                        else if (isSelf) status = ' (You)';
-                        
-                        resultsDiv.innerHTML = `
-                            <div class="search-result">
-                                <div class="search-result-info">
-                                    <span class="status-dot ${user.lastActive && (Date.now() - user.lastActive < 300000) ? 'online' : 'offline'}"></span>
-                                    <span>Found user: <strong>${user.username}</strong>${status}</span>
-                                </div>
-                                ${!isFriend && !isBlocked && !isSelf ? 
-                                    '<button class="search-result-actions" id="send-request-button">Send Friend Request</button>' : ''}
-                            </div>
-                        `;
-                        
-                        if (!isFriend && !isBlocked && !isSelf) {
-                            document.getElementById('send-request-button').addEventListener('click', () => {
-                                const result = sendFriendRequest(user.id);
-                                if (result.success) {
-                                    showToast('Friend request sent!');
-                                    resultsDiv.innerHTML = '';
-                                    document.getElementById('friend-id-input').value = '';
-                                } else {
-                                    showToast(result.message, 'error');
-                                }
-                            });
-                        }
-                    });
-                    
-                    document.querySelectorAll('.friend-actions .chat-btn').forEach(button => {
-                        button.addEventListener('click', (e) => {
-                            const friend = e.target.dataset.friend;
-                            loadChat(friend);
-                        });
-                    });
-                    
-                    document.querySelectorAll('.friend-actions .remove-btn').forEach(button => {
-                        button.addEventListener('click', (e) => {
-                            const friend = e.target.dataset.friend;
-                            removeFriend(friend);
-                        });
-                    });
-                    break;
-                    
-                case 'notifications':
-                    mainContent.innerHTML = `
-                        <h2>Notifications</h2>
-                        <div id="notifications-list">
-                            ${currentUser.notifications.map(notification => {
-                                if (notification.type === 'friendRequest') {
-                                    return `
-                                        <div class="notification-item">
-                                            <div class="notification-message">
-                                                ${notification.from} wants to be your friend
-                                            </div>
-                                            <div class="notification-actions">
-                                                <button class="accept-btn" data-from="${notification.from}">Accept</button>
-                                                <button class="block-btn" data-from="${notification.from}">Block</button>
-                                                <button class="dismiss-btn" data-from="${notification.from}">Dismiss</button>
-                                            </div>
-                                        </div>
-                                    `;
-                                }
-                                return '';
-                            }).join('') || '<p>No notifications</p>'}
-                        </div>
-                    `;
-                    
-                    document.querySelectorAll('.accept-btn').forEach(button => {
-                        button.addEventListener('click', (e) => {
-                            const from = e.target.dataset.from;
-                            const result = handleFriendRequest(from, 'accept');
-                            if (result.success) {
-                                showToast('Friend request accepted!');
-                            } else {
-                                showToast(result.message, 'error');
-                            }
-                            loadTab('notifications');
-                        });
-                    });
-                    
-                    document.querySelectorAll('.block-btn').forEach(button => {
-                        button.addEventListener('click', (e) => {
-                            const from = e.target.dataset.from;
-                            handleFriendRequest(from, 'block');
-                            showToast('User blocked');
-                            loadTab('notifications');
-                        });
-                    });
-                    
-                    document.querySelectorAll('.dismiss-btn').forEach(button => {
-                        button.addEventListener('click', (e) => {
-                            const from = e.target.dataset.from;
-                            handleFriendRequest(from, 'dismiss');
-                            loadTab('notifications');
-                        });
-                    });
-                    break;
-                    
-                case 'chat':
-                    mainContent.innerHTML = `
-                        <div class="chat-container">
-                            <div class="chat-friends" id="chat-friends">
-                                ${currentUser.friends.map(friend => {
-                                    const friendUser = users[friend] || {};
-                                    const diff = Date.now() - (friendUser.lastActive || 0);
-                                    const isOnline = diff < 300000;
-                                    const statusTitle = isOnline ? 'Online' : `Last seen ${timeAgo(friendUser.lastActive)}`;
-                                    return `
-                                        <div class="chat-friend-item" data-friend="${friend}">
-                                            <span title="${statusTitle}">
-                                                <span class="status-dot ${isOnline ? 'online' : 'offline'}"></span>
-                                                ${friend}
-                                            </span>
-                                            <div class="chat-friend-actions">
-                                                <button class="block-btn" data-friend="${friend}">Block</button>
-                                                <button class="delete-chat-btn" data-friend="${friend}">Delete Chat</button>
-                                            </div>
-                                        </div>
-                                    `;
-                                }).join('') || '<p>No friends to chat with</p>'}
-                            </div>
-                            <div class="chat-messages" id="chat-messages">
-                                <p>Select a friend to start chatting</p>
-                            </div>
-                        </div>
-                        <div class="chat-input" id="chat-input" style="display: none;">
-                            <input type="text" id="message-input" placeholder="Type a message...">
-                            <button id="send-message-button">Send</button>
-                        </div>
-                    `;
-                    
-                    document.querySelectorAll('.chat-friend-item[data-friend]').forEach(item => {
-                        item.addEventListener('click', (e) => {
-                            if (e.target.tagName === 'BUTTON') return;
-                            const friend = item.dataset.friend;
-                            loadChat(friend);
-                        });
-                    });
-
-                    document.querySelectorAll('.block-btn').forEach(button => {
-                        button.addEventListener('click', (e) => {
-                            const friend = e.target.dataset.friend;
-                            blockUser(friend);
-                            showToast('User blocked');
-                            loadTab('chat');
-                        });
-                    });
-
-                    document.querySelectorAll('.delete-chat-btn').forEach(button => {
-                        button.addEventListener('click', (e) => {
-                            const friend = e.target.dataset.friend;
-                            deleteChat(friend);
-                            showToast('Chat deleted');
-                            loadTab('chat');
-                        });
-                    });
-                    break;
-            }
         }
-
-        function loadChat(friendUsername) {
-            const currentUser = getCurrentUser();
-            if (!currentUser) return;
+        
+        // Get chat key for two users
+        function getChatKey(user1, user2) {
+            return [user1, user2].sort().join('_');
+        }
+        
+        // Load chat history between two users
+        function loadChatHistory(user1, user2) {
+            const key = getChatKey(user1, user2);
+            const history = chatHistory[key] || [];
             
-            const chatMessages = document.getElementById('chat-messages');
-            const chatInput = document.getElementById('chat-input');
+            messagesContainer.innerHTML = '';
             
-            if (!chatMessages || !chatInput) {
-                loadTab('chat');
-                setTimeout(() => loadChat(friendUsername), 100);
+            if (history.length === 0) {
+                const welcomeMsg = document.createElement('div');
+                welcomeMsg.className = 'welcome-message';
+                welcomeMsg.innerHTML = `<p>Start a new conversation with ${usersDatabase[user2].name}!</p>`;
+                messagesContainer.appendChild(welcomeMsg);
                 return;
             }
             
-            updateLastActive();
+            let lastMessageDate = null;
             
-            // Update active friend in list
-            document.querySelectorAll('.chat-friend-item').forEach(item => {
-                item.classList.remove('active');
-                if (item.dataset.friend === friendUsername) {
-                    item.classList.add('active');
-                }
+            history.forEach(message => {
+                displayMessage(message, user1);
             });
-            
-            // Display messages with date separators and timestamps
-            const messages = currentUser.chats[friendUsername] || [];
-            let prevDate = null;
-            let html = '';
-            messages.forEach(msg => {
-                const msgDate = new Date(msg.timestamp).toDateString();
-                if (msgDate !== prevDate) {
-                    html += `<div class="date-separator">${new Date(msg.timestamp).toLocaleDateString()}</div>`;
-                    prevDate = msgDate;
-                }
-                const isOutgoing = msg.from === currentUser.username;
-                const timeStr = new Date(msg.timestamp).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-                html += `
-                    <div class="message ${isOutgoing ? 'message-outgoing' : 'message-incoming'}">
-                        ${msg.text}
-                        <small class="timestamp">${timeStr}</small>
-                    </div>
-                `;
-            });
-            chatMessages.innerHTML = html;
             
             // Scroll to bottom
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-            
-            // Show input and set up event listener
-            chatInput.style.display = 'flex';
-            const messageInput = document.getElementById('message-input');
-            const sendButton = document.getElementById('send-message-button');
-            
-            // Clear existing event listeners
-            const newSendButton = sendButton.cloneNode(true);
-            sendButton.parentNode.replaceChild(newSendButton, sendButton);
-            
-            newSendButton.addEventListener('click', () => {
-                const messageText = messageInput.value.trim();
-                if (messageText) {
-                    const result = sendMessage(friendUsername, messageText);
-                    if (result.success) {
-                        messageInput.value = '';
-                        loadChat(friendUsername);
-                    } else {
-                        showToast(result.message, 'error');
-                    }
-                }
-            });
-            
-            messageInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    const messageText = messageInput.value.trim();
-                    if (messageText) {
-                        const result = sendMessage(friendUsername, messageText);
-                        if (result.success) {
-                            messageInput.value = '';
-                            loadChat(friendUsername);
-                        } else {
-                            showToast(result.message, 'error');
-                        }
-                    }
-                }
-            });
-            
-            // Focus input
-            messageInput.focus();
+            setTimeout(() => {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 100);
         }
-
-        function removeFriend(friendUsername) {
-            const currentUser = getCurrentUser();
-            if (!currentUser) return;
+        
+        // Display a message
+        function displayMessage(message, currentUser) {
+            const messageDate = new Date(message.timestamp);
+            const now = new Date();
             
-            const users = getAllUsers();
-            const friend = users[friendUsername];
+            // Create message element
+            const messageElement = document.createElement('div');
+            messageElement.className = `message ${message.sender === currentUser ? 'sent' : 'received'}`;
             
-            if (!friend) return;
+            // Format time
+            const timeString = messageDate.toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            }).toLowerCase();
             
-            // Remove from current user's friends
-            currentUser.friends = currentUser.friends.filter(f => f !== friendUsername);
+            messageElement.innerHTML = `
+                <div class="message-sender">${usersDatabase[message.sender].name}</div>
+                <div class="message-content">${message.text}</div>
+                <div class="message-time">${timeString}</div>
+            `;
             
-            // Remove from friend's friends
-            if (friend.friends) {
-                friend.friends = friend.friends.filter(f => f !== currentUser.username);
-            }
-            
-            // Update both users
-            users[currentUser.username] = currentUser;
-            users[friendUsername] = friend;
-            saveAllUsers(users);
-            updateLastActive();
-            
-            // Reload friends tab
-            loadTab('friends');
+            messagesContainer.appendChild(messageElement);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
-
-        // Initialize the app
-        function initApp() {
-            // Check if user is logged in
-            const currentUser = getCurrentUser();
-            if (currentUser) {
-                updateLastActive();
-                showAppScreen();
-                setInterval(updateLastActive, 60000);
-            } else {
-                showAuthScreen();
+        
+        // Send message
+        function sendMessage() {
+            const messageText = messageInput.value.trim();
+            if (!messageText || !selectedUser) return;
+            
+            const now = new Date();
+            const message = {
+                sender: currentUser,
+                text: messageText,
+                timestamp: now.getTime(),
+                date: now.toLocaleDateString()
+            };
+            
+            // Save message to chat history
+            const key = getChatKey(currentUser, selectedUser);
+            chatHistory[key].push(message);
+            localStorage.setItem(`chat_${key}`, JSON.stringify(chatHistory[key]));
+            
+            // Display message
+            displayMessage(message, currentUser);
+            
+            // Clear input
+            messageInput.value = '';
+            
+            // Simulate received message after a delay
+            if (Math.random() > 0.3) { // 70% chance of reply
+                setTimeout(() => {
+                    simulateReply(selectedUser, currentUser);
+                }, 1000 + Math.random() * 3000);
             }
+        }
+        
+        // Simulate a reply from the other user
+        function simulateReply(sender, receiver) {
+            const replies = [
+                "Hey there!",
+                "How are you doing?",
+                "That's interesting!",
+                "I was thinking the same thing!",
+                "Let's meet up soon.",
+                "Thanks for letting me know.",
+                "I'll get back to you on that.",
+                "Sounds good to me!",
+                "What are your plans for the weekend?",
+                "Did you see the latest news?"
+            ];
             
-            // Auth screen setup
-            const authTitle = document.getElementById('auth-title');
-            const authButton = document.getElementById('auth-button');
-            const authSwitch = document.getElementById('auth-switch');
-            const errorMessage = document.getElementById('error-message');
+            const now = new Date();
+            const message = {
+                sender: sender,
+                text: replies[Math.floor(Math.random() * replies.length)],
+                timestamp: now.getTime(),
+                date: now.toLocaleDateString()
+            };
             
-            let isLogin = true;
+            // Save message to chat history
+            const key = getChatKey(currentUser, selectedUser);
+            chatHistory[key].push(message);
+            localStorage.setItem(`chat_${key}`, JSON.stringify(chatHistory[key]));
             
-            function updateAuthUI() {
-                if (isLogin) {
-                    authTitle.textContent = 'Login';
-                    authButton.textContent = 'Login';
-                    authSwitch.textContent = 'Don\'t have an account? Register';
-                } else {
-                    authTitle.textContent = 'Register';
-                    authButton.textContent = 'Register';
-                    authSwitch.textContent = 'Already have an account? Login';
-                }
-                errorMessage.textContent = '';
-            }
-            
-            authSwitch.addEventListener('click', () => {
-                isLogin = !isLogin;
-                updateAuthUI();
-            });
-            
-            authButton.addEventListener('click', () => {
-                const username = document.getElementById('username').value.trim();
-                const password = document.getElementById('password').value.trim();
+            // Only display if this is the active chat
+            if (selectedUser === sender) {
+                displayMessage(message, currentUser);
                 
-                if (!username || !password) {
-                    errorMessage.textContent = 'Please enter both username and password';
-                    return;
-                }
+                // Show typing indicator
+                typingIndicator.textContent = `${usersDatabase[sender].name} is typing...`;
                 
-                if (isLogin) {
-                    const result = login(username, password);
-                    if (result.success) {
-                        setInterval(updateLastActive, 60000);
-                        showAppScreen();
-                    } else {
-                        errorMessage.textContent = result.message;
-                    }
-                } else {
-                    const result = register(username, password);
-                    if (result.success) {
-                        errorMessage.textContent = 'Registration successful! Please login.';
-                        isLogin = true;
-                        updateAuthUI();
-                    } else {
-                        errorMessage.textContent = result.message;
-                    }
-                }
-            });
-            
-            // App setup
-            document.querySelectorAll('.sidebar-item[data-tab]').forEach(item => {
-                item.addEventListener('click', () => {
-                    const tabName = item.dataset.tab;
-                    loadTab(tabName);
-                });
-            });
-            
-            document.getElementById('logout-button').addEventListener('click', () => {
-                clearCurrentUser();
-                showAuthScreen();
-            });
-            
-            // Handle tab changes from URL hash
-            window.addEventListener('hashchange', () => {
-                const tabName = window.location.hash.substring(1);
-                if (tabName) {
-                    loadTab(tabName);
-                }
-            });
-            
-            // Listen for data updates from other tabs
-            broadcastChannel.addEventListener('message', (event) => {
-                if (event.data.type === 'dataUpdate') {
-                    // Reload current tab to reflect changes
-                    const currentTab = document.querySelector('.sidebar-item.active')?.dataset.tab;
-                    if (currentTab) {
-                        loadTab(currentTab);
-                    }
-                }
-            });
-            
-            // Initial tab load
-            if (currentUser) {
-                const initialTab = window.location.hash.substring(1) || 'profile';
-                loadTab(initialTab);
+                // Hide typing indicator after delay
+                setTimeout(() => {
+                    typingIndicator.textContent = '';
+                }, 2000);
             }
-            
-            updateAuthUI();
         }
-
-        // Start the app
-        document.addEventListener('DOMContentLoaded', function() {
-            // First ensure the user ID index exists
-            if (!localStorage.getItem(userIdIndexDB)) {
-                rebuildUserIdIndex();
+        
+        // Send message on button click or Enter key (without shift)
+        sendBtn.addEventListener('click', sendMessage);
+        messageInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
             }
-            
-            // Then initialize the app as before
-            initApp();
         });
+        
+        // Typing indicator
+        messageInput.addEventListener('input', function() {
+            if (typingTimeout) clearTimeout(typingTimeout);
+            
+            // Show typing indicator to other user (simulated)
+            if (this.value.length > 0) {
+                // In a real app, you would send a "typing" event to the server
+            }
+            
+            typingTimeout = setTimeout(() => {
+                // Hide typing indicator after 1 second of inactivity
+                // In a real app, you would send a "stopped typing" event
+            }, 1000);
+        });
+        
+        // Responsive sidebar toggle
+        window.addEventListener('resize', function() {
+            if (window.innerWidth <= 768) {
+                sidebar.classList.remove('open');
+            } else {
+                sidebar.classList.add('open');
+            }
+        });
+        
+        // Initialize for mobile
+        if (window.innerWidth <= 768) {
+            sidebar.classList.remove('open');
+        } else {
+            sidebar.classList.add('open');
+        }
     </script>
 </body>
 </html>
