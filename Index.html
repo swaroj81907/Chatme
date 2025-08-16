@@ -9,7 +9,7 @@
             --bg-color: #1e1e2e;
             --sidebar-color: #181825;
             --text-color: #cdd6f4;
-            --accent-color: #89b4fa;
+            --accent-color: #5c6bc0;
             --hover-color: #313244;
             --success-color: #a6e3a1;
             --error-color: #f38ba8;
@@ -31,6 +31,26 @@
             flex-direction: column;
         }
 
+        /* Scrollbar Styles */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--sidebar-color);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--hover-color);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-color);
+        }
+
         /* Auth Screen */
         .auth-container {
             display: flex;
@@ -43,7 +63,7 @@
         .auth-form {
             background-color: var(--sidebar-color);
             padding: 2rem;
-            border-radius: 10px;
+            border-radius: 20px;
             width: 100%;
             max-width: 400px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -60,7 +80,7 @@
             padding: 0.75rem;
             margin-bottom: 1rem;
             border: none;
-            border-radius: 5px;
+            border-radius: 10px;
             background-color: var(--input-bg);
             color: var(--text-color);
         }
@@ -71,7 +91,7 @@
             background-color: var(--accent-color);
             color: var(--sidebar-color);
             border: none;
-            border-radius: 5px;
+            border-radius: 10px;
             cursor: pointer;
             font-weight: bold;
             margin-bottom: 1rem;
@@ -124,7 +144,7 @@
 
         .sidebar-item {
             padding: 0.75rem;
-            border-radius: 5px;
+            border-radius: 15px;
             margin-bottom: 0.5rem;
             cursor: pointer;
             display: flex;
@@ -176,8 +196,23 @@
             padding: 0.5rem;
             background-color: var(--input-bg);
             border: none;
-            border-radius: 5px;
+            border-radius: 10px;
             color: var(--text-color);
+        }
+
+        .copy-container {
+            display: flex;
+        }
+
+        .copy-btn {
+            margin-left: 0.5rem;
+            background-color: var(--accent-color);
+            color: var(--sidebar-color);
+            border: none;
+            border-radius: 10px;
+            padding: 0.5rem;
+            cursor: pointer;
+            font-size: 1rem;
         }
 
         /* Friends Tab */
@@ -190,7 +225,7 @@
             padding: 0.5rem;
             background-color: var(--input-bg);
             border: none;
-            border-radius: 5px;
+            border-radius: 10px;
             color: var(--text-color);
             margin-bottom: 0.5rem;
         }
@@ -200,7 +235,7 @@
             background-color: var(--accent-color);
             color: var(--sidebar-color);
             border: none;
-            border-radius: 5px;
+            border-radius: 10px;
             cursor: pointer;
         }
 
@@ -214,7 +249,7 @@
             align-items: center;
             padding: 0.75rem;
             background-color: var(--input-bg);
-            border-radius: 5px;
+            border-radius: 15px;
             margin-bottom: 0.5rem;
         }
 
@@ -222,7 +257,7 @@
             margin-left: 0.5rem;
             padding: 0.25rem 0.5rem;
             border: none;
-            border-radius: 3px;
+            border-radius: 10px;
             cursor: pointer;
         }
 
@@ -240,7 +275,7 @@
         .notification-item {
             padding: 0.75rem;
             background-color: var(--input-bg);
-            border-radius: 5px;
+            border-radius: 15px;
             margin-bottom: 0.5rem;
         }
 
@@ -252,7 +287,7 @@
             margin-right: 0.5rem;
             padding: 0.25rem 0.5rem;
             border: none;
-            border-radius: 3px;
+            border-radius: 10px;
             cursor: pointer;
         }
 
@@ -294,8 +329,11 @@
         }
 
         .chat-friend-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             padding: 0.75rem;
-            border-radius: 5px;
+            border-radius: 15px;
             margin-bottom: 0.5rem;
             cursor: pointer;
         }
@@ -309,10 +347,29 @@
             color: var(--sidebar-color);
         }
 
+        .chat-friend-actions button {
+            margin-left: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .chat-friend-actions .block-btn {
+            background-color: var(--error-color);
+            color: white;
+        }
+
+        .chat-friend-actions .delete-chat-btn {
+            background-color: var(--hover-color);
+            color: var(--text-color);
+        }
+
         .message {
             max-width: 70%;
             padding: 0.75rem;
-            border-radius: 10px;
+            border-radius: 20px;
             margin-bottom: 0.75rem;
             word-wrap: break-word;
         }
@@ -328,6 +385,21 @@
             background-color: var(--input-bg);
         }
 
+        .timestamp {
+            display: block;
+            font-size: 0.7em;
+            text-align: right;
+            margin-top: 0.5em;
+            opacity: 0.7;
+        }
+
+        .date-separator {
+            text-align: center;
+            margin: 1rem 0;
+            color: var(--hover-color);
+            font-size: 0.8em;
+        }
+
         .chat-input {
             display: flex;
             margin-top: auto;
@@ -339,7 +411,7 @@
             padding: 0.75rem;
             background-color: var(--input-bg);
             border: none;
-            border-radius: 5px;
+            border-radius: 10px;
             color: var(--text-color);
             margin-right: 0.5rem;
         }
@@ -349,8 +421,56 @@
             background-color: var(--accent-color);
             color: var(--sidebar-color);
             border: none;
-            border-radius: 5px;
+            border-radius: 10px;
             cursor: pointer;
+        }
+
+        /* Status Dots */
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+
+        .online {
+            background-color: green;
+        }
+
+        .offline {
+            background-color: red;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            color: white;
+            z-index: 1000;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        .toast.success {
+            background-color: var(--success-color);
+            color: var(--sidebar-color);
+        }
+
+        .toast.error {
+            background-color: var(--error-color);
+        }
+
+        @keyframes fadein {
+            from { bottom: 0; opacity: 0; }
+            to { bottom: 20px; opacity: 1; }
+        }
+
+        @keyframes fadeout {
+            from { bottom: 20px; opacity: 1; }
+            to { bottom: 0; opacity: 0; }
         }
 
         /* Responsive */
@@ -467,6 +587,34 @@
             localStorage.removeItem(currentUserKey);
         }
 
+        // Update last active
+        function updateLastActive() {
+            const currentUser = getCurrentUser();
+            if (!currentUser) return;
+            
+            const users = getAllUsers();
+            currentUser.lastActive = Date.now();
+            users[currentUser.username] = currentUser;
+            saveAllUsers(users);
+        }
+
+        // Time ago function
+        function timeAgo(timestamp) {
+            if (!timestamp) return 'never';
+            const seconds = Math.floor((Date.now() - timestamp) / 1000);
+            let interval = seconds / 31536000;
+            if (interval > 1) return Math.floor(interval) + " years ago";
+            interval = seconds / 2592000;
+            if (interval > 1) return Math.floor(interval) + " months ago";
+            interval = seconds / 86400;
+            if (interval > 1) return Math.floor(interval) + " days ago";
+            interval = seconds / 3600;
+            if (interval > 1) return Math.floor(interval) + " hours ago";
+            interval = seconds / 60;
+            if (interval > 1) return Math.floor(interval) + " minutes ago";
+            return "just now";
+        }
+
         // Register a new user
         function register(username, password) {
             const users = getAllUsers();
@@ -481,8 +629,10 @@
                 password,
                 id: userId,
                 friends: [],
+                blocked: [],
                 chats: {},
-                notifications: []
+                notifications: [],
+                lastActive: Date.now()
             };
             
             saveAllUsers(users);
@@ -502,6 +652,9 @@
                 return {success: false, message: 'Incorrect password'};
             }
             
+            user.lastActive = Date.now();
+            users[username] = user;
+            saveAllUsers(users);
             setCurrentUser(username);
             return {success: true};
         }
@@ -534,6 +687,10 @@
                 return {success: false, message: 'Already friends'};
             }
             
+            if (currentUser.blocked.includes(receiver.username)) {
+                return {success: false, message: 'User is blocked'};
+            }
+            
             // Check if request already exists
             const existingRequest = receiver.notifications.find(
                 n => n.type === 'friendRequest' && n.from === currentUser.username
@@ -551,6 +708,7 @@
             
             users[receiver.username] = receiver;
             saveAllUsers(users);
+            updateLastActive();
             
             return {success: true};
         }
@@ -573,6 +731,9 @@
             );
             
             if (action === 'accept') {
+                if (currentUser.blocked.includes(fromUsername)) {
+                    return {success: false, message: 'Cannot accept blocked user'};
+                }
                 // Add each other as friends if not already
                 if (!currentUser.friends.includes(fromUsername)) {
                     currentUser.friends.push(fromUsername);
@@ -591,13 +752,17 @@
                     sender.chats[currentUser.username] = [];
                 }
             } else if (action === 'block') {
-                // Add to blocked list (to be implemented)
+                if (!currentUser.blocked.includes(fromUsername)) {
+                    currentUser.blocked.push(fromUsername);
+                }
             }
+            // For dismiss, just remove notification
             
             // Update both users
             users[currentUser.username] = currentUser;
             users[fromUsername] = sender;
             saveAllUsers(users);
+            updateLastActive();
             
             return {success: true};
         }
@@ -616,6 +781,10 @@
             
             if (!currentUser.friends.includes(friendUsername)) {
                 return {success: false, message: 'Not friends'};
+            }
+            
+            if (currentUser.blocked.includes(friendUsername)) {
+                return {success: false, message: 'User is blocked'};
             }
             
             // Add message to current user's chat
@@ -644,8 +813,61 @@
             users[currentUser.username] = currentUser;
             users[friendUsername] = friend;
             saveAllUsers(users);
+            updateLastActive();
             
             return {success: true};
+        }
+
+        // Block a user
+        function blockUser(friendUsername) {
+            const currentUser = getCurrentUser();
+            if (!currentUser) return;
+            
+            const users = getAllUsers();
+            const friend = users[friendUsername];
+            
+            if (!friend) return;
+            
+            if (!currentUser.blocked.includes(friendUsername)) {
+                currentUser.blocked.push(friendUsername);
+            }
+            
+            // Remove from friends
+            currentUser.friends = currentUser.friends.filter(f => f !== friendUsername);
+            friend.friends = friend.friends.filter(f => f !== currentUser.username);
+            
+            users[currentUser.username] = currentUser;
+            users[friendUsername] = friend;
+            saveAllUsers(users);
+            updateLastActive();
+        }
+
+        // Delete chat
+        function deleteChat(friendUsername) {
+            const currentUser = getCurrentUser();
+            if (!currentUser) return;
+            
+            const users = getAllUsers();
+            const friend = users[friendUsername];
+            
+            if (!friend) return;
+            
+            currentUser.chats[friendUsername] = [];
+            friend.chats[currentUser.username] = [];
+            
+            users[currentUser.username] = currentUser;
+            users[friendUsername] = friend;
+            saveAllUsers(users);
+            updateLastActive();
+        }
+
+        // Show toast
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.classList.add('toast', type);
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
         }
 
         // UI Functions
@@ -670,6 +892,8 @@
                 return;
             }
             
+            updateLastActive();
+            
             // Update active tab in sidebar
             document.querySelectorAll('.sidebar-item').forEach(item => {
                 item.classList.remove('active');
@@ -677,6 +901,8 @@
                     item.classList.add('active');
                 }
             });
+            
+            const users = getAllUsers();
             
             switch (tabName) {
                 case 'profile':
@@ -689,10 +915,19 @@
                             </div>
                             <div class="profile-field">
                                 <label>User ID</label>
-                                <input type="text" value="${currentUser.id}" readonly>
+                                <div class="copy-container">
+                                    <input type="text" value="${currentUser.id}" readonly>
+                                    <button class="copy-btn" data-copy="${currentUser.id}">📋</button>
+                                </div>
                             </div>
                         </div>
                     `;
+                    document.querySelectorAll('.copy-btn').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            navigator.clipboard.writeText(btn.dataset.copy);
+                            showToast('Copied to clipboard!');
+                        });
+                    });
                     break;
                     
                 case 'friends':
@@ -703,15 +938,24 @@
                             <button id="send-request-button">Send Friend Request</button>
                         </div>
                         <div class="friends-list" id="friends-list">
-                            ${currentUser.friends.map(friend => `
-                                <div class="friend-item">
-                                    <span>${friend}</span>
-                                    <div class="friend-actions">
-                                        <button class="chat-btn" data-friend="${friend}">Chat</button>
-                                        <button class="remove-btn" data-friend="${friend}">Remove</button>
+                            ${currentUser.friends.map(friend => {
+                                const friendUser = users[friend] || {};
+                                const diff = Date.now() - (friendUser.lastActive || 0);
+                                const isOnline = diff < 300000; // 5 minutes
+                                const statusTitle = isOnline ? 'Online' : `Last seen ${timeAgo(friendUser.lastActive)}`;
+                                return `
+                                    <div class="friend-item">
+                                        <span title="${statusTitle}">
+                                            <span class="status-dot ${isOnline ? 'online' : 'offline'}"></span>
+                                            ${friend}
+                                        </span>
+                                        <div class="friend-actions">
+                                            <button class="chat-btn" data-friend="${friend}">Chat</button>
+                                            <button class="remove-btn" data-friend="${friend}">Remove</button>
+                                        </div>
                                     </div>
-                                </div>
-                            `).join('') || '<p>No friends yet. Add some!</p>'}
+                                `;
+                            }).join('') || '<p>No friends yet. Add some!</p>'}
                         </div>
                     `;
                     
@@ -720,11 +964,11 @@
                         const result = sendFriendRequest(friendId);
                         
                         if (result.success) {
-                            alert('Friend request sent!');
+                            showToast('Friend request sent!');
                             document.getElementById('friend-id-input').value = '';
                             loadTab('friends');
                         } else {
-                            alert(result.message);
+                            showToast(result.message, 'error');
                         }
                     });
                     
@@ -770,7 +1014,12 @@
                     document.querySelectorAll('.accept-btn').forEach(button => {
                         button.addEventListener('click', (e) => {
                             const from = e.target.dataset.from;
-                            handleFriendRequest(from, 'accept');
+                            const result = handleFriendRequest(from, 'accept');
+                            if (result.success) {
+                                showToast('Friend request accepted!');
+                            } else {
+                                showToast(result.message, 'error');
+                            }
                             loadTab('notifications');
                         });
                     });
@@ -779,6 +1028,7 @@
                         button.addEventListener('click', (e) => {
                             const from = e.target.dataset.from;
                             handleFriendRequest(from, 'block');
+                            showToast('User blocked');
                             loadTab('notifications');
                         });
                     });
@@ -796,11 +1046,24 @@
                     mainContent.innerHTML = `
                         <div class="chat-container">
                             <div class="chat-friends" id="chat-friends">
-                                ${currentUser.friends.map(friend => `
-                                    <div class="chat-friend-item" data-friend="${friend}">
-                                        ${friend}
-                                    </div>
-                                `).join('') || '<p>No friends to chat with</p>'}
+                                ${currentUser.friends.map(friend => {
+                                    const friendUser = users[friend] || {};
+                                    const diff = Date.now() - (friendUser.lastActive || 0);
+                                    const isOnline = diff < 300000;
+                                    const statusTitle = isOnline ? 'Online' : `Last seen ${timeAgo(friendUser.lastActive)}`;
+                                    return `
+                                        <div class="chat-friend-item" data-friend="${friend}">
+                                            <span title="${statusTitle}">
+                                                <span class="status-dot ${isOnline ? 'online' : 'offline'}"></span>
+                                                ${friend}
+                                            </span>
+                                            <div class="chat-friend-actions">
+                                                <button class="block-btn" data-friend="${friend}">Block</button>
+                                                <button class="delete-chat-btn" data-friend="${friend}">Delete Chat</button>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('') || '<p>No friends to chat with</p>'}
                             </div>
                             <div class="chat-messages" id="chat-messages">
                                 <p>Select a friend to start chatting</p>
@@ -812,10 +1075,29 @@
                         </div>
                     `;
                     
-                    document.querySelectorAll('.chat-friend-item').forEach(item => {
+                    document.querySelectorAll('.chat-friend-item[data-friend]').forEach(item => {
                         item.addEventListener('click', (e) => {
-                            const friend = e.target.dataset.friend;
+                            if (e.target.tagName === 'BUTTON') return;
+                            const friend = item.dataset.friend;
                             loadChat(friend);
+                        });
+                    });
+
+                    document.querySelectorAll('.block-btn').forEach(button => {
+                        button.addEventListener('click', (e) => {
+                            const friend = e.target.dataset.friend;
+                            blockUser(friend);
+                            showToast('User blocked');
+                            loadTab('chat');
+                        });
+                    });
+
+                    document.querySelectorAll('.delete-chat-btn').forEach(button => {
+                        button.addEventListener('click', (e) => {
+                            const friend = e.target.dataset.friend;
+                            deleteChat(friend);
+                            showToast('Chat deleted');
+                            loadTab('chat');
                         });
                     });
                     break;
@@ -835,6 +1117,8 @@
                 return;
             }
             
+            updateLastActive();
+            
             // Update active friend in list
             document.querySelectorAll('.chat-friend-item').forEach(item => {
                 item.classList.remove('active');
@@ -843,16 +1127,26 @@
                 }
             });
             
-            // Display messages
+            // Display messages with date separators and timestamps
             const messages = currentUser.chats[friendUsername] || [];
-            chatMessages.innerHTML = messages.map(msg => {
+            let prevDate = null;
+            let html = '';
+            messages.forEach(msg => {
+                const msgDate = new Date(msg.timestamp).toDateString();
+                if (msgDate !== prevDate) {
+                    html += `<div class="date-separator">${new Date(msg.timestamp).toLocaleDateString()}</div>`;
+                    prevDate = msgDate;
+                }
                 const isOutgoing = msg.from === currentUser.username;
-                return `
+                const timeStr = new Date(msg.timestamp).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+                html += `
                     <div class="message ${isOutgoing ? 'message-outgoing' : 'message-incoming'}">
                         ${msg.text}
+                        <small class="timestamp">${timeStr}</small>
                     </div>
                 `;
-            }).join('');
+            });
+            chatMessages.innerHTML = html;
             
             // Scroll to bottom
             chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -869,9 +1163,13 @@
             newSendButton.addEventListener('click', () => {
                 const messageText = messageInput.value.trim();
                 if (messageText) {
-                    sendMessage(friendUsername, messageText);
-                    messageInput.value = '';
-                    loadChat(friendUsername);
+                    const result = sendMessage(friendUsername, messageText);
+                    if (result.success) {
+                        messageInput.value = '';
+                        loadChat(friendUsername);
+                    } else {
+                        showToast(result.message, 'error');
+                    }
                 }
             });
             
@@ -879,9 +1177,13 @@
                 if (e.key === 'Enter') {
                     const messageText = messageInput.value.trim();
                     if (messageText) {
-                        sendMessage(friendUsername, messageText);
-                        messageInput.value = '';
-                        loadChat(friendUsername);
+                        const result = sendMessage(friendUsername, messageText);
+                        if (result.success) {
+                            messageInput.value = '';
+                            loadChat(friendUsername);
+                        } else {
+                            showToast(result.message, 'error');
+                        }
                     }
                 }
             });
@@ -911,6 +1213,7 @@
             users[currentUser.username] = currentUser;
             users[friendUsername] = friend;
             saveAllUsers(users);
+            updateLastActive();
             
             // Reload friends tab
             loadTab('friends');
@@ -921,7 +1224,9 @@
             // Check if user is logged in
             const currentUser = getCurrentUser();
             if (currentUser) {
+                updateLastActive();
                 showAppScreen();
+                setInterval(updateLastActive, 60000);
             } else {
                 showAuthScreen();
             }
@@ -964,6 +1269,7 @@
                 if (isLogin) {
                     const result = login(username, password);
                     if (result.success) {
+                        setInterval(updateLastActive, 60000);
                         showAppScreen();
                     } else {
                         errorMessage.textContent = result.message;
