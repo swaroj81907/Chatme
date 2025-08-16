@@ -3,814 +3,854 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neon Chat</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Purple DM</title>
     <style>
         :root {
-            --primary-color: #6c5ce7;
-            --secondary-color: #a29bfe;
-            --dark-color: #2d3436;
-            --light-color: #f5f6fa;
-            --success-color: #00b894;
-            --danger-color: #d63031;
-            --warning-color: #fdcb6e;
-            --info-color: #0984e3;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --border-radius: 12px;
-            --transition: all 0.3s ease;
+            --purple-dark: #3a0ca3;
+            --purple-medium: #7209b7;
+            --purple-light: #b5179e;
+            --purple-lighter: #f72585;
+            --white: #f8f9fa;
+            --gray: #e9ecef;
+            --shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+            --glass: rgba(255, 255, 255, 0.1);
+            --received-bg: rgba(255, 255, 255, 0.1);
+            --sent-bg: #f72585;
+            --reply-bg: rgba(0, 0, 0, 0.2);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background-color: var(--light-color);
-            color: var(--dark-color);
-            line-height: 1.6;
-        }
-
-        /* Login Page */
-        .login-container {
+            background: linear-gradient(135deg, var(--purple-dark), var(--purple-medium));
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            padding: 20px;
-        }
-
-        .login-box {
-            background-color: white;
-            padding: 2.5rem;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            width: 100%;
-            max-width: 400px;
-            transform: translateY(0);
-            transition: var(--transition);
-            position: relative;
+            color: var(--white);
             overflow: hidden;
         }
 
-        .login-box::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        /* Login Screen */
+        .login-container {
+            width: 320px;
+            padding: 2rem;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .login-container:hover {
+            transform: translateY(-5px);
         }
 
         .login-title {
             text-align: center;
-            color: var(--primary-color);
             margin-bottom: 1.5rem;
-            font-size: 2rem;
-            font-weight: 700;
+            font-size: 1.8rem;
+            font-weight: 600;
         }
 
         .input-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             position: relative;
         }
 
         .input-group label {
             display: block;
             margin-bottom: 0.5rem;
-            color: var(--dark-color);
-            font-weight: 500;
+            font-size: 0.9rem;
         }
 
         .input-group input {
             width: 100%;
-            padding: 0.8rem 1rem;
-            border: 2px solid #e0e0e0;
-            border-radius: var(--border-radius);
+            padding: 0.8rem;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--white);
             font-size: 1rem;
-            transition: var(--transition);
-            padding-right: 2.5rem;
+            transition: all 0.2s ease;
         }
 
         .input-group input:focus {
-            border-color: var(--primary-color);
             outline: none;
-            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 0 2px var(--purple-lighter);
         }
 
-        .input-group .input-icon {
+        .password-toggle {
             position: absolute;
-            right: 1rem;
-            top: 2.5rem;
-            color: var(--primary-color);
+            right: 10px;
+            top: 35px;
             cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .password-toggle:hover {
+            opacity: 1;
         }
 
         .login-btn {
             width: 100%;
             padding: 0.8rem;
-            background-color: var(--primary-color);
-            color: white;
             border: none;
-            border-radius: var(--border-radius);
+            border-radius: 8px;
+            background: var(--purple-lighter);
+            color: white;
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: var(--transition);
+            transition: all 0.2s ease;
             margin-top: 1rem;
         }
 
         .login-btn:hover {
-            background-color: #5a4bd1;
+            background: #ff0676;
             transform: translateY(-2px);
         }
 
-        /* Chat Page */
+        .error-message {
+            color: #ff6b6b;
+            font-size: 0.8rem;
+            text-align: center;
+            margin-top: 1rem;
+            height: 1rem;
+        }
+
+        /* Chat Screen */
         .chat-container {
             display: none;
+            width: 100%;
             height: 100vh;
-            background-color: var(--light-color);
             flex-direction: column;
+            animation: fadeIn 0.5s ease;
         }
 
         .chat-header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            padding: 1rem 1.5rem;
+            padding: 1rem;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: var(--shadow);
-            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         .chat-title {
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             font-weight: 600;
         }
 
-        .user-info {
+        .chat-peer {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .header-actions {
             display: flex;
-            align-items: center;
             gap: 0.5rem;
         }
 
-        .user-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background-color: white;
-            color: var(--primary-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-
-        .chat-main {
-            display: flex;
-            height: calc(100vh - 64px);
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 280px;
-            background-color: white;
-            border-right: 1px solid #e0e0e0;
-            display: flex;
-            flex-direction: column;
-            transition: var(--transition);
-            overflow: hidden;
-        }
-
-        .sidebar-header {
-            padding: 1rem;
-            border-bottom: 1px solid #e0e0e0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .sidebar-title {
-            color: var(--primary-color);
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-
-        .user-list {
-            flex: 1;
-            overflow-y: auto;
-            padding: 0.5rem;
-        }
-
-        .user-item {
-            display: flex;
-            align-items: center;
-            padding: 0.75rem;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            transition: var(--transition);
-            margin-bottom: 0.5rem;
-        }
-
-        .user-item:hover {
-            background-color: #f0e6ff;
-        }
-
-        .user-item.active {
-            background-color: #e6e0ff;
-        }
-
-        .user-item-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--secondary-color);
+        .chat-delete {
+            background: #ff4757;
+            border: none;
             color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            margin-right: 0.75rem;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
 
-        .user-item-name {
-            font-weight: 500;
+        .chat-delete:hover {
+            background: #ff0000;
         }
 
-        .user-item-status {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background-color: var(--success-color);
-            margin-left: auto;
+        .chat-logout {
+            background: var(--purple-lighter);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
 
-        /* Chat Area */
-        .chat-area {
+        .chat-logout:hover {
+            background: #ff0676;
+        }
+
+        .chat-messages {
             flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
-            position: relative;
-        }
-
-        .messages {
-            flex: 1;
-            padding: 1.5rem;
-            overflow-y: auto;
-            background-color: #f8f9fa;
+            gap: 0.8rem;
         }
 
         .message {
-            margin-bottom: 1rem;
             max-width: 70%;
-            padding: 0.75rem 1rem;
-            border-radius: var(--border-radius);
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
             position: relative;
-            animation: messageIn 0.3s ease;
+            animation: popIn 0.2s ease;
+            display: flex;
+            flex-direction: column;
         }
 
-        @keyframes messageIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .message-sent {
+            align-self: flex-end;
+            background: var(--sent-bg);
+            border-bottom-right-radius: 4px;
         }
 
-        .sent {
-            background-color: var(--primary-color);
-            color: white;
-            margin-left: auto;
-            border-bottom-right-radius: 5px;
-        }
-
-        .received {
-            background-color: white;
-            color: var(--dark-color);
-            margin-right: auto;
-            border-bottom-left-radius: 5px;
-            box-shadow: var(--shadow);
+        .message-received {
+            align-self: flex-start;
+            background: var(--received-bg);
+            border-bottom-left-radius: 4px;
         }
 
         .message-sender {
+            font-size: 0.7rem;
             font-weight: 600;
-            font-size: 0.8rem;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.3rem;
+            opacity: 0.8;
         }
 
-        .received .message-sender {
-            color: var(--primary-color);
-        }
-
-        .message-content {
-            word-wrap: break-word;
+        .message-text {
             font-size: 0.95rem;
+            word-wrap: break-word;
         }
 
         .message-time {
-            font-size: 0.7rem;
-            opacity: 0.8;
+            font-size: 0.6rem;
+            opacity: 0.6;
             text-align: right;
-            margin-top: 0.25rem;
-        }
-
-        .date-separator {
-            text-align: center;
-            margin: 1.5rem 0;
-            position: relative;
-            color: var(--dark-color);
-            font-size: 0.8rem;
-        }
-
-        .date-separator::before, .date-separator::after {
-            content: "";
-            position: absolute;
-            top: 50%;
-            width: 40%;
-            height: 1px;
-            background-color: #ddd;
-        }
-
-        .date-separator::before {
-            left: 0;
-        }
-
-        .date-separator::after {
-            right: 0;
-        }
-
-        .date-separator span {
-            background-color: #f8f9fa;
-            padding: 0 0.75rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        .input-area {
-            padding: 1rem;
-            background-color: white;
-            border-top: 1px solid #e0e0e0;
+            margin-top: 0.3rem;
             display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 5px;
+        }
+
+        .message-delivered {
+            font-size: 0.6rem;
+            color: #a5ffa5;
+        }
+
+        .message-actions {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            opacity: 0;
+            transition: opacity 0.2s;
+            display: flex;
+            gap: 3px;
+        }
+
+        .message:hover .message-actions {
+            opacity: 1;
+        }
+
+        .message-action-btn {
+            background: rgba(0, 0, 0, 0.3);
+            border: none;
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.7rem;
+        }
+
+        .message-action-btn:hover {
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .chat-input-container {
+            padding: 1rem;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            display: flex;
+            gap: 0.5rem;
             align-items: center;
         }
 
-        .message-input {
-            flex: 1;
-            padding: 0.75rem 1rem;
-            border: 2px solid #e0e0e0;
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            transition: var(--transition);
-            resize: none;
-            height: 50px;
-            max-height: 120px;
-        }
-
-        .message-input:focus {
-            border-color: var(--primary-color);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
-        }
-
-        .send-btn {
-            background-color: var(--primary-color);
-            color: white;
+        .file-upload-btn {
+            background: rgba(255, 255, 255, 0.2);
             border: none;
-            border-radius: 50%;
-            width: 45px;
-            height: 45px;
-            margin-left: 0.75rem;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: var(--transition);
+            transition: all 0.2s ease;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
         }
 
-        .send-btn:hover {
-            background-color: #5a4bd1;
-            transform: scale(1.05);
+        .file-upload-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
         }
 
-        .typing-indicator {
+        .file-upload-input {
+            display: none;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--white);
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 0 2px var(--purple-lighter);
+        }
+
+        .chat-send {
+            padding: 0 1.5rem;
+            border: none;
+            border-radius: 8px;
+            background: var(--purple-lighter);
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            height: 40px;
+        }
+
+        .chat-send:hover {
+            background: #ff0676;
+        }
+
+        .file-message {
+            margin-top: 5px;
+            max-width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .file-message img, .file-message video {
+            max-width: 100%;
+            max-height: 200px;
+            display: block;
+        }
+
+        .file-download {
+            color: inherit;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+        }
+
+        .reply-container {
+            background: var(--reply-bg);
+            border-radius: 8px;
+            padding: 8px;
+            margin-bottom: 8px;
+            border-left: 3px solid var(--purple-lighter);
+        }
+
+        .reply-sender {
+            font-size: 0.7rem;
+            font-weight: 600;
+            opacity: 0.8;
+        }
+
+        .reply-content {
             font-size: 0.8rem;
-            color: #666;
-            margin-left: 1rem;
-            font-style: italic;
-            height: 20px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        /* Responsive Styles */
-        @media (max-width: 768px) {
-            .login-box {
-                padding: 1.5rem;
-            }
+        .replying-to {
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+            color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
 
-            .sidebar {
-                position: absolute;
-                height: calc(100vh - 64px);
-                z-index: 100;
-                transform: translateX(-100%);
-            }
+        .cancel-reply {
+            cursor: pointer;
+            margin-left: 5px;
+        }
 
-            .sidebar.open {
-                transform: translateX(0);
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.9); opacity: 0; }
+            80% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .login-container {
+                width: 90%;
+                max-width: 320px;
             }
 
             .message {
                 max-width: 85%;
             }
         }
-
-        /* Animations */
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .pulse {
-            animation: pulse 1.5s infinite;
-        }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--secondary-color);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-color);
-        }
     </style>
 </head>
 <body>
-    <!-- Login Page -->
-    <div class="login-container" id="loginPage">
-        <div class="login-box">
-            <h1 class="login-title">Neon Chat</h1>
-            <div class="input-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" placeholder="Enter your username">
-                <i class="fas fa-user input-icon"></i>
-            </div>
-            <div class="input-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" placeholder="Enter your password">
-                <i class="fas fa-eye input-icon" id="togglePassword"></i>
-            </div>
-            <button class="login-btn" id="loginBtn">
-                <i class="fas fa-sign-in-alt"></i> Login
-            </button>
+    <!-- Login Screen -->
+    <div class="login-container" id="loginContainer">
+        <h1 class="login-title">Purple DM</h1>
+        <div class="input-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" placeholder="Enter username">
         </div>
+        <div class="input-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Enter password">
+            <span class="password-toggle" id="togglePassword">👁️</span>
+        </div>
+        <button class="login-btn" id="loginBtn">Sign In</button>
+        <div class="error-message" id="errorMessage"></div>
     </div>
-    
-    <!-- Chat Page -->
-    <div class="chat-container" id="chatPage">
+
+    <!-- Chat Screen -->
+    <div class="chat-container" id="chatContainer">
         <div class="chat-header">
-            <div class="chat-title">Neon Chat</div>
-            <div class="user-info">
-                <div class="user-avatar" id="userAvatar">U</div>
-                <span id="currentUsername">User</span>
+            <div class="chat-title">Purple DM</div>
+            <div class="chat-peer" id="chatPeer"></div>
+            <div class="header-actions">
+                <button class="chat-delete" id="deleteChatBtn">Delete Chat</button>
+                <button class="chat-logout" id="logoutBtn">Logout</button>
             </div>
         </div>
-        <div class="chat-main">
-            <div class="sidebar" id="sidebar">
-                <div class="sidebar-header">
-                    <div class="sidebar-title">Active Users</div>
-                </div>
-                <div class="user-list" id="userList">
-                    <!-- Users will be populated here -->
-                </div>
-            </div>
-            <div class="chat-area">
-                <div class="messages" id="messages">
-                    <div class="welcome-message">
-                        <p>Welcome to Neon Chat! Select a user to start chatting.</p>
-                    </div>
-                </div>
-                <div class="input-area">
-                    <textarea class="message-input" id="messageInput" placeholder="Type a message..." disabled></textarea>
-                    <div class="typing-indicator" id="typingIndicator"></div>
-                    <button class="send-btn" id="sendBtn" disabled>
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                </div>
-            </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input-container">
+            <button class="file-upload-btn" id="fileUploadBtn">+</button>
+            <input type="file" id="fileUploadInput" class="file-upload-input" accept="image/*, video/*, .pdf, .doc, .docx">
+            <input type="text" class="chat-input" id="messageInput" placeholder="Type a message...">
+            <button class="chat-send" id="sendBtn">Send</button>
         </div>
     </div>
 
     <script>
+        // User credentials (easy to modify)
+        const users = {
+            cookie: {
+                username: 'cookie',
+                password: '9903272574',
+                peer: 'cutieee'
+            },
+            cutieee: {
+                username: 'cutieee',
+                password: '0019cutiee',
+                peer: 'cookie'
+            }
+        };
+
         // DOM Elements
-        const loginPage = document.getElementById('loginPage');
-        const chatPage = document.getElementById('chatPage');
+        const loginContainer = document.getElementById('loginContainer');
+        const chatContainer = document.getElementById('chatContainer');
         const usernameInput = document.getElementById('username');
         const passwordInput = document.getElementById('password');
         const togglePassword = document.getElementById('togglePassword');
         const loginBtn = document.getElementById('loginBtn');
-        const sidebar = document.getElementById('sidebar');
-        const userList = document.getElementById('userList');
-        const messagesContainer = document.getElementById('messages');
+        const errorMessage = document.getElementById('errorMessage');
+        const chatPeer = document.getElementById('chatPeer');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const deleteChatBtn = document.getElementById('deleteChatBtn');
+        const chatMessages = document.getElementById('chatMessages');
         const messageInput = document.getElementById('messageInput');
         const sendBtn = document.getElementById('sendBtn');
-        const currentUsername = document.getElementById('currentUsername');
-        const userAvatar = document.getElementById('userAvatar');
-        const typingIndicator = document.getElementById('typingIndicator');
+        const fileUploadBtn = document.getElementById('fileUploadBtn');
+        const fileUploadInput = document.getElementById('fileUploadInput');
 
-        // Application State
-        let currentUser = '';
-        let selectedUser = null;
-        let chatHistory = {};
-        let typingTimeout = null;
-        
-        // Mock database (in a real app, this would be server-side)
-        const usersDatabase = {
-            'user1': { password: 'password1', name: 'User One', avatar: 'U1', online: true },
-            'user2': { password: 'password2', name: 'User Two', avatar: 'U2', online: true },
-            'admin': { password: 'admin123', name: 'Admin', avatar: 'AD', online: false }
-        };
-        
-        // Initialize chat history for each user pair
-        function initializeChatHistory() {
-            const userPairs = [
-                ['user1', 'user2'],
-                ['user1', 'admin'],
-                ['user2', 'admin']
-            ];
-            
-            userPairs.forEach(pair => {
-                const key = pair.sort().join('_');
-                if (!chatHistory[key]) {
-                    chatHistory[key] = JSON.parse(localStorage.getItem(`chat_${key}`)) || [];
-                }
+        // State
+        let currentUser = null;
+        let replyingTo = null;
+
+        // Initialize
+        function init() {
+            // Event listeners
+            loginBtn.addEventListener('click', handleLogin);
+            togglePassword.addEventListener('click', togglePasswordVisibility);
+            logoutBtn.addEventListener('click', handleLogout);
+            deleteChatBtn.addEventListener('click', handleDeleteChat);
+            sendBtn.addEventListener('click', sendMessage);
+            messageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendMessage();
             });
+            fileUploadBtn.addEventListener('click', () => fileUploadInput.click());
+            fileUploadInput.addEventListener('change', handleFileUpload);
+
+            // Check if already logged in (for page refresh)
+            const storedUser = localStorage.getItem('currentUser');
+            if (storedUser && users[storedUser]) {
+                currentUser = users[storedUser];
+                showChat();
+                loadMessages();
+            }
         }
-        
-        // Toggle password visibility
-        togglePassword.addEventListener('click', function() {
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            this.classList.toggle('fa-eye');
-            this.classList.toggle('fa-eye-slash');
-        });
-        
-        // Login functionality
-        loginBtn.addEventListener('click', function() {
+
+        // Login handler
+        function handleLogin() {
             const username = usernameInput.value.trim();
             const password = passwordInput.value.trim();
-            
+
             if (!username || !password) {
-                alert('Please enter both username and password');
+                showError('Please enter both username and password');
                 return;
             }
-            
-            if (usersDatabase[username] && usersDatabase[username].password === password) {
-                currentUser = username;
-                currentUsername.textContent = usersDatabase[username].name;
-                userAvatar.textContent = usersDatabase[username].avatar;
-                
-                // Mark user as online
-                usersDatabase[username].online = true;
-                
-                loginPage.style.display = 'none';
-                chatPage.style.display = 'flex';
-                
-                initializeChatHistory();
-                populateUserList();
-            } else {
-                alert('Invalid username or password');
+
+            const user = users[username];
+            if (!user || user.password !== password) {
+                showError('Invalid username or password');
+                return;
             }
-        });
-        
-        // Allow login with Enter key
-        passwordInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                loginBtn.click();
+
+            currentUser = user;
+            localStorage.setItem('currentUser', currentUser.username);
+            showChat();
+            loadMessages();
+        }
+
+        // Show error message
+        function showError(message) {
+            errorMessage.textContent = message;
+            setTimeout(() => {
+                errorMessage.textContent = '';
+            }, 3000);
+        }
+
+        // Toggle password visibility
+        function togglePasswordVisibility() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            togglePassword.textContent = type === 'password' ? '👁️' : '👁️‍🗨️';
+        }
+
+        // Show chat screen
+        function showChat() {
+            loginContainer.style.display = 'none';
+            chatContainer.style.display = 'flex';
+            chatPeer.textContent = `Chat with ${currentUser.peer}`;
+            messageInput.focus();
+        }
+
+        // Logout handler
+        function handleLogout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            chatContainer.style.display = 'none';
+            loginContainer.style.display = 'block';
+            usernameInput.value = '';
+            passwordInput.value = '';
+            usernameInput.focus();
+            chatMessages.innerHTML = '';
+            replyingTo = null;
+        }
+
+        // Delete chat handler
+        function handleDeleteChat() {
+            if (confirm('Are you sure you want to delete all messages in this chat?')) {
+                const conversationKey = getConversationKey();
+                localStorage.removeItem(conversationKey);
+                chatMessages.innerHTML = '';
+                replyingTo = null;
             }
-        });
-        
-        // Populate user list
-        function populateUserList() {
-            userList.innerHTML = '';
+        }
+
+        // Get conversation key for localStorage
+        function getConversationKey() {
+            const participants = [currentUser.username, currentUser.peer].sort();
+            return `chat_${participants[0]}_${participants[1]}`;
+        }
+
+        // Load messages from localStorage
+        function loadMessages() {
+            const conversationKey = getConversationKey();
+            const messages = JSON.parse(localStorage.getItem(conversationKey)) || [];
             
-            Object.keys(usersDatabase).forEach(username => {
-                if (username !== currentUser) {
-                    const user = usersDatabase[username];
-                    const userItem = document.createElement('div');
-                    userItem.className = 'user-item';
-                    userItem.innerHTML = `
-                        <div class="user-item-avatar">${user.avatar}</div>
-                        <div class="user-item-name">${user.name}</div>
-                        <div class="user-item-status ${user.online ? 'online' : 'offline'}"></div>
-                    `;
-                    
-                    userItem.addEventListener('click', () => {
-                        // Remove active class from all users
-                        document.querySelectorAll('.user-item').forEach(item => {
-                            item.classList.remove('active');
-                        });
-                        
-                        // Add active class to selected user
-                        userItem.classList.add('active');
-                        
-                        // Set selected user
-                        selectedUser = username;
-                        
-                        // Enable message input
-                        messageInput.disabled = false;
-                        sendBtn.disabled = false;
-                        
-                        // Load chat history
-                        loadChatHistory(currentUser, selectedUser);
-                    });
-                    
-                    userList.appendChild(userItem);
+            chatMessages.innerHTML = '';
+            messages.forEach(msg => {
+                if (msg.type === 'file') {
+                    appendFileMessage(msg.from, msg.fileName, msg.fileUrl, msg.timestamp, msg.fileType);
+                } else {
+                    appendMessage(msg.from, msg.text, msg.timestamp, msg.replyTo);
                 }
             });
+            
+            scrollToBottom();
         }
-        
-        // Get chat key for two users
-        function getChatKey(user1, user2) {
-            return [user1, user2].sort().join('_');
-        }
-        
-        // Load chat history between two users
-        function loadChatHistory(user1, user2) {
-            const key = getChatKey(user1, user2);
-            const history = chatHistory[key] || [];
-            
-            messagesContainer.innerHTML = '';
-            
-            if (history.length === 0) {
-                const welcomeMsg = document.createElement('div');
-                welcomeMsg.className = 'welcome-message';
-                welcomeMsg.innerHTML = `<p>Start a new conversation with ${usersDatabase[user2].name}!</p>`;
-                messagesContainer.appendChild(welcomeMsg);
-                return;
-            }
-            
-            let lastMessageDate = null;
-            
-            history.forEach(message => {
-                displayMessage(message, user1);
-            });
-            
-            // Scroll to bottom
-            setTimeout(() => {
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            }, 100);
-        }
-        
-        // Display a message
-        function displayMessage(message, currentUser) {
-            const messageDate = new Date(message.timestamp);
-            const now = new Date();
-            
-            // Create message element
-            const messageElement = document.createElement('div');
-            messageElement.className = `message ${message.sender === currentUser ? 'sent' : 'received'}`;
-            
-            // Format time
-            const timeString = messageDate.toLocaleTimeString('en-US', {
-                hour: 'numeric',
-                minute: '2-digit',
-                hour12: true
-            }).toLowerCase();
-            
-            messageElement.innerHTML = `
-                <div class="message-sender">${usersDatabase[message.sender].name}</div>
-                <div class="message-content">${message.text}</div>
-                <div class="message-time">${timeString}</div>
-            `;
-            
-            messagesContainer.appendChild(messageElement);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
-        
+
         // Send message
         function sendMessage() {
-            const messageText = messageInput.value.trim();
-            if (!messageText || !selectedUser) return;
-            
-            const now = new Date();
+            const text = messageInput.value.trim();
+            if (!text) return;
+
+            const timestamp = Date.now();
             const message = {
-                sender: currentUser,
-                text: messageText,
-                timestamp: now.getTime(),
-                date: now.toLocaleDateString()
+                from: currentUser.username,
+                text,
+                timestamp,
+                type: 'text',
+                replyTo: replyingTo
             };
-            
-            // Save message to chat history
-            const key = getChatKey(currentUser, selectedUser);
-            chatHistory[key].push(message);
-            localStorage.setItem(`chat_${key}`, JSON.stringify(chatHistory[key]));
-            
+
+            // Save to localStorage
+            const conversationKey = getConversationKey();
+            const messages = JSON.parse(localStorage.getItem(conversationKey)) || [];
+            messages.push(message);
+            localStorage.setItem(conversationKey, JSON.stringify(messages));
+
             // Display message
-            displayMessage(message, currentUser);
-            
-            // Clear input
+            appendMessage(currentUser.username, text, timestamp, replyingTo);
             messageInput.value = '';
-            
-            // Simulate received message after a delay
-            if (Math.random() > 0.3) { // 70% chance of reply
-                setTimeout(() => {
-                    simulateReply(selectedUser, currentUser);
-                }, 1000 + Math.random() * 3000);
-            }
+            messageInput.focus();
+            replyingTo = null;
         }
-        
-        // Simulate a reply from the other user
-        function simulateReply(sender, receiver) {
-            const replies = [
-                "Hey there!",
-                "How are you doing?",
-                "That's interesting!",
-                "I was thinking the same thing!",
-                "Let's meet up soon.",
-                "Thanks for letting me know.",
-                "I'll get back to you on that.",
-                "Sounds good to me!",
-                "What are your plans for the weekend?",
-                "Did you see the latest news?"
-            ];
+
+        // Handle file upload
+        function handleFileUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const timestamp = Date.now();
+            const fileName = file.name;
+            const fileType = file.type.split('/')[0]; // 'image', 'video', etc.
             
-            const now = new Date();
+            // In a real app, you would upload the file to a server here
+            // For this demo, we'll just create a fake URL
+            const fileUrl = URL.createObjectURL(file);
+
             const message = {
-                sender: sender,
-                text: replies[Math.floor(Math.random() * replies.length)],
-                timestamp: now.getTime(),
-                date: now.toLocaleDateString()
+                from: currentUser.username,
+                fileName,
+                fileUrl,
+                fileType,
+                timestamp,
+                type: 'file',
+                replyTo: replyingTo
             };
+
+            // Save to localStorage
+            const conversationKey = getConversationKey();
+            const messages = JSON.parse(localStorage.getItem(conversationKey)) || [];
+            messages.push(message);
+            localStorage.setItem(conversationKey, JSON.stringify(messages));
+
+            // Display message
+            appendFileMessage(currentUser.username, fileName, fileUrl, timestamp, fileType, replyingTo);
             
-            // Save message to chat history
-            const key = getChatKey(currentUser, selectedUser);
-            chatHistory[key].push(message);
-            localStorage.setItem(`chat_${key}`, JSON.stringify(chatHistory[key]));
-            
-            // Only display if this is the active chat
-            if (selectedUser === sender) {
-                displayMessage(message, currentUser);
-                
-                // Show typing indicator
-                typingIndicator.textContent = `${usersDatabase[sender].name} is typing...`;
-                
-                // Hide typing indicator after delay
-                setTimeout(() => {
-                    typingIndicator.textContent = '';
-                }, 2000);
-            }
+            // Reset file input
+            fileUploadInput.value = '';
+            replyingTo = null;
         }
-        
-        // Send message on button click or Enter key (without shift)
-        sendBtn.addEventListener('click', sendMessage);
-        messageInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
-        });
-        
-        // Typing indicator
-        messageInput.addEventListener('input', function() {
-            if (typingTimeout) clearTimeout(typingTimeout);
+
+        // Append message to chat
+        function appendMessage(sender, text, timestamp, replyTo = null) {
+            const isSent = sender === currentUser.username;
+            const timeString = new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            const messageEl = document.createElement('div');
+            messageEl.className = `message ${isSent ? 'message-sent' : 'message-received'}`;
             
-            // Show typing indicator to other user (simulated)
-            if (this.value.length > 0) {
-                // In a real app, you would send a "typing" event to the server
+            let replyContent = '';
+            if (replyTo) {
+                const repliedMessage = findMessage(replyTo);
+                if (repliedMessage) {
+                    replyContent = `
+                        <div class="reply-container">
+                            <div class="reply-sender">${repliedMessage.from}</div>
+                            <div class="reply-content">
+                                ${repliedMessage.type === 'file' ? 
+                                    `📁 ${repliedMessage.fileName}` : 
+                                    repliedMessage.text}
+                            </div>
+                        </div>
+                    `;
+                }
             }
+
+            messageEl.innerHTML = `
+                <div class="message-actions">
+                    <button class="message-action-btn" data-message-id="${timestamp}">↩️</button>
+                </div>
+                ${replyContent}
+                <div class="message-sender">${sender}</div>
+                <div class="message-text">${text}</div>
+                <div class="message-time">
+                    ${timeString}
+                    ${isSent ? '<span class="message-delivered">✓</span>' : ''}
+                </div>
+            `;
+
+            chatMessages.appendChild(messageEl);
             
-            typingTimeout = setTimeout(() => {
-                // Hide typing indicator after 1 second of inactivity
-                // In a real app, you would send a "stopped typing" event
-            }, 1000);
-        });
-        
-        // Responsive sidebar toggle
-        window.addEventListener('resize', function() {
-            if (window.innerWidth <= 768) {
-                sidebar.classList.remove('open');
+            // Add reply event listener
+            const replyBtn = messageEl.querySelector('.message-action-btn');
+            replyBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                handleReply(timestamp);
+            });
+            
+            scrollToBottom();
+        }
+
+        // Append file message to chat
+        function appendFileMessage(sender, fileName, fileUrl, timestamp, fileType, replyTo = null) {
+            const isSent = sender === currentUser.username;
+            const timeString = new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            const messageEl = document.createElement('div');
+            messageEl.className = `message ${isSent ? 'message-sent' : 'message-received'}`;
+            
+            let replyContent = '';
+            if (replyTo) {
+                const repliedMessage = findMessage(replyTo);
+                if (repliedMessage) {
+                    replyContent = `
+                        <div class="reply-container">
+                            <div class="reply-sender">${repliedMessage.from}</div>
+                            <div class="reply-content">
+                                ${repliedMessage.type === 'file' ? 
+                                    `📁 ${repliedMessage.fileName}` : 
+                                    repliedMessage.text}
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            let fileContent = '';
+            if (fileType === 'image') {
+                fileContent = `<div class="file-message"><img src="${fileUrl}" alt="${fileName}"></div>`;
+            } else if (fileType === 'video') {
+                fileContent = `<div class="file-message"><video controls src="${fileUrl}"></video></div>`;
             } else {
-                sidebar.classList.add('open');
+                fileContent = `<a href="${fileUrl}" download="${fileName}" class="file-download">📄 ${fileName}</a>`;
             }
-        });
-        
-        // Initialize for mobile
-        if (window.innerWidth <= 768) {
-            sidebar.classList.remove('open');
-        } else {
-            sidebar.classList.add('open');
+
+            messageEl.innerHTML = `
+                <div class="message-actions">
+                    <button class="message-action-btn" data-message-id="${timestamp}">↩️</button>
+                </div>
+                ${replyContent}
+                <div class="message-sender">${sender}</div>
+                <div class="message-text">${fileContent}</div>
+                <div class="message-time">
+                    ${timeString}
+                    ${isSent ? '<span class="message-delivered">✓</span>' : ''}
+                </div>
+            `;
+
+            chatMessages.appendChild(messageEl);
+            
+            // Add reply event listener
+            const replyBtn = messageEl.querySelector('.message-action-btn');
+            replyBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                handleReply(timestamp);
+            });
+            
+            scrollToBottom();
         }
+
+        // Find message by timestamp
+        function findMessage(timestamp) {
+            const conversationKey = getConversationKey();
+            const messages = JSON.parse(localStorage.getItem(conversationKey)) || [];
+            return messages.find(msg => msg.timestamp == timestamp);
+        }
+
+        // Handle reply to message
+        function handleReply(messageId) {
+            const message = findMessage(messageId);
+            if (message) {
+                replyingTo = messageId;
+                
+                // Show reply indicator above input
+                const replyIndicator = document.createElement('div');
+                replyIndicator.className = 'replying-to';
+                replyIndicator.innerHTML = `
+                    Replying to ${message.from}: 
+                    <span class="reply-content">
+                        ${message.type === 'file' ? `📁 ${message.fileName}` : message.text}
+                    </span>
+                    <span class="cancel-reply">✕</span>
+                `;
+                
+                // Remove existing reply indicator if any
+                const existingIndicator = document.querySelector('.replying-to');
+                if (existingIndicator) {
+                    existingIndicator.remove();
+                }
+                
+                // Add new indicator
+                const chatInputContainer = document.querySelector('.chat-input-container');
+                chatInputContainer.insertBefore(replyIndicator, chatInputContainer.firstChild);
+                
+                // Add cancel event
+                const cancelBtn = replyIndicator.querySelector('.cancel-reply');
+                cancelBtn.addEventListener('click', () => {
+                    replyingTo = null;
+                    replyIndicator.remove();
+                });
+                
+                messageInput.focus();
+            }
+        }
+
+        // Scroll to bottom of chat
+        function scrollToBottom() {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Initialize the app
+        init();
     </script>
 </body>
 </html>
