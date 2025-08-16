@@ -573,7 +573,7 @@
         // Data structure for users
         const usersDB = 'chatAppUsers';
         const currentUserKey = 'chatAppCurrentUser';
-        const userIdIndexDB = 'chatAppUserIdIndex'; // New storage for ID to username mapping
+        const userIdIndexDB = 'chatAppUserIdIndex';
         
         // BroadcastChannel for multi-tab sync
         const broadcastChannel = new BroadcastChannel('chatAppUpdates');
@@ -602,7 +602,9 @@
             // Update the ID index
             const index = {};
             for (const username in users) {
-                index[users[username].id] = username;
+                if (users[username].id) {  // Ensure user has an ID
+                    index[users[username].id] = username;
+                }
             }
             localStorage.setItem(userIdIndexDB, JSON.stringify(index));
             
@@ -639,14 +641,32 @@
             saveAllUsers(users);
         }
 
-        // Find user by ID
+        // Find user by ID (updated to handle missing users better)
         function findUserById(userId) {
-            const index = getUserIdIndex();
-            const username = index[userId];
-            if (!username) return null;
-            
+            try {
+                const index = getUserIdIndex();
+                const username = index[userId];
+                if (!username) return null;
+                
+                const users = getAllUsers();
+                return users[username] || null;
+            } catch (e) {
+                console.error("Error finding user by ID:", e);
+                return null;
+            }
+        }
+
+        // Rebuild user ID index if it gets corrupted
+        function rebuildUserIdIndex() {
             const users = getAllUsers();
-            return users[username] || null;
+            const index = {};
+            for (const username in users) {
+                if (users[username].id) {
+                    index[users[username].id] = username;
+                }
+            }
+            localStorage.setItem(userIdIndexDB, JSON.stringify(index));
+            return index;
         }
 
         // Time ago function
@@ -666,7 +686,7 @@
             return "just now";
         }
 
-        // Register a new user
+        // Register a new user (updated to ensure ID is always set)
         function register(username, password) {
             const users = getAllUsers();
             
@@ -674,7 +694,12 @@
                 return {success: false, message: 'Username already exists'};
             }
             
-            const userId = generateId();
+            // Ensure we have a valid ID
+            let userId = generateId();
+            while (findUserById(userId)) {  // Ensure ID is unique
+                userId = generateId();
+            }
+            
             users[username] = {
                 username,
                 password,
@@ -710,50 +735,62 @@
             return {success: true};
         }
 
-        // Send a friend request
+        // Send a friend request (updated with better error handling)
         function sendFriendRequest(receiverId) {
-            const currentUser = getCurrentUser();
-            if (!currentUser) return {success: false, message: 'Not logged in'};
-            
-            const receiver = findUserById(receiverId);
-            
-            if (!receiver) {
-                return {success: false, message: 'User not found'};
+            try {
+                const currentUser = getCurrentUser();
+                if (!currentUser) return {success: false, message: 'Not logged in'};
+                
+                let receiver = findUserById(receiverId);
+                
+                if (!receiver) {
+                    // Try to rebuild index in case it's corrupted
+                    rebuildUserIdIndex();
+                    const receiverRetry = findUserById(receiverId);
+                    if (!receiverRetry) {
+                        return {success: false, message: 'User not found'};
+                    }
+                    receiver = receiverRetry;
+                }
+                
+                if (receiver.username === currentUser.username) {
+                    return {success: false, message: 'Cannot add yourself'};
+                }
+                
+                if (currentUser.friends.includes(receiver.username)) {
+                    return {success: false, message: 'Already friends'};
+                }
+                
+                if (currentUser.blocked.includes(receiver.username)) {
+                    return {success: false, message: 'User is blocked'};
+                }
+                
+                // Check if request already exists
+                const existingRequest = receiver.notifications.find(
+                    n => n.type === 'friendRequest' && n.from === currentUser.username
+                );
+                
+                if (existingRequest) {
+                    return {success: false, message: 'Request already sent'};
+                }
+                
+                // Add notification to receiver
+                const users = getAllUsers();
+                receiver.notifications.push({
+                    type: 'friendRequest',
+                    from: currentUser.username,
+                    timestamp: new Date().toISOString()
+                });
+                
+                users[receiver.username] = receiver;
+                saveAllUsers(users);
+                updateLastActive();
+                
+                return {success: true};
+            } catch (e) {
+                console.error("Error sending friend request:", e);
+                return {success: false, message: 'An error occurred'};
             }
-            
-            if (receiver.username === currentUser.username) {
-                return {success: false, message: 'Cannot add yourself'};
-            }
-            
-            if (currentUser.friends.includes(receiver.username)) {
-                return {success: false, message: 'Already friends'};
-            }
-            
-            if (currentUser.blocked.includes(receiver.username)) {
-                return {success: false, message: 'User is blocked'};
-            }
-            
-            // Check if request already exists
-            const existingRequest = receiver.notifications.find(
-                n => n.type === 'friendRequest' && n.from === currentUser.username
-            );
-            
-            if (existingRequest) {
-                return {success: false, message: 'Request already sent'};
-            }
-            
-            // Add notification to receiver
-            const users = getAllUsers();
-            receiver.notifications.push({
-                type: 'friendRequest',
-                from: currentUser.username
-            });
-            
-            users[receiver.username] = receiver;
-            saveAllUsers(users);
-            updateLastActive();
-            
-            return {success: true};
         }
 
         // Handle friend request response
@@ -985,7 +1022,7 @@
                             ${currentUser.friends.map(friend => {
                                 const friendUser = users[friend] || {};
                                 const diff = Date.now() - (friendUser.lastActive || 0);
-                                const isOnline = diff < 300000; // 5 minutes
+                                const isOnline = diff < 300000;
                                 const statusTitle = isOnline ? 'Online' : `Last seen ${timeAgo(friendUser.lastActive)}`;
                                 return `
                                     <div class="friend-item">
@@ -1010,44 +1047,50 @@
                             return;
                         }
                         
-                        const user = findUserById(friendId);
+                        let user = findUserById(friendId);
                         const resultsDiv = document.getElementById('search-results');
                         
-                        if (user) {
-                            const isFriend = currentUser.friends.includes(user.username);
-                            const isBlocked = currentUser.blocked.includes(user.username);
-                            const isSelf = user.username === currentUser.username;
-                            
-                            let status = '';
-                            if (isFriend) status = ' (Already friends)';
-                            else if (isBlocked) status = ' (Blocked)';
-                            else if (isSelf) status = ' (You)';
-                            
-                            resultsDiv.innerHTML = `
-                                <div class="search-result">
-                                    <div class="search-result-info">
-                                        <span class="status-dot ${user.lastActive && (Date.now() - user.lastActive < 300000) ? 'online' : 'offline'}"></span>
-                                        <span>Found user: <strong>${user.username}</strong>${status}</span>
-                                    </div>
-                                    ${!isFriend && !isBlocked && !isSelf ? 
-                                        '<button class="search-result-actions" id="send-request-button">Send Friend Request</button>' : ''}
-                                </div>
-                            `;
-                            
-                            if (!isFriend && !isBlocked && !isSelf) {
-                                document.getElementById('send-request-button').addEventListener('click', () => {
-                                    const result = sendFriendRequest(user.id);
-                                    if (result.success) {
-                                        showToast('Friend request sent!');
-                                        resultsDiv.innerHTML = '';
-                                        document.getElementById('friend-id-input').value = '';
-                                    } else {
-                                        showToast(result.message, 'error');
-                                    }
-                                });
+                        if (!user) {
+                            // Try rebuilding index and searching again
+                            rebuildUserIdIndex();
+                            user = findUserById(friendId);
+                            if (!user) {
+                                resultsDiv.innerHTML = '<div class="search-result">User not found. Make sure you entered the correct ID.</div>';
+                                return;
                             }
-                        } else {
-                            resultsDiv.innerHTML = '<div class="search-result">User not found</div>';
+                        }
+
+                        const isFriend = currentUser.friends.includes(user.username);
+                        const isBlocked = currentUser.blocked.includes(user.username);
+                        const isSelf = user.username === currentUser.username;
+                        
+                        let status = '';
+                        if (isFriend) status = ' (Already friends)';
+                        else if (isBlocked) status = ' (Blocked)';
+                        else if (isSelf) status = ' (You)';
+                        
+                        resultsDiv.innerHTML = `
+                            <div class="search-result">
+                                <div class="search-result-info">
+                                    <span class="status-dot ${user.lastActive && (Date.now() - user.lastActive < 300000) ? 'online' : 'offline'}"></span>
+                                    <span>Found user: <strong>${user.username}</strong>${status}</span>
+                                </div>
+                                ${!isFriend && !isBlocked && !isSelf ? 
+                                    '<button class="search-result-actions" id="send-request-button">Send Friend Request</button>' : ''}
+                            </div>
+                        `;
+                        
+                        if (!isFriend && !isBlocked && !isSelf) {
+                            document.getElementById('send-request-button').addEventListener('click', () => {
+                                const result = sendFriendRequest(user.id);
+                                if (result.success) {
+                                    showToast('Friend request sent!');
+                                    resultsDiv.innerHTML = '';
+                                    document.getElementById('friend-id-input').value = '';
+                                } else {
+                                    showToast(result.message, 'error');
+                                }
+                            });
                         }
                     });
                     
@@ -1407,7 +1450,15 @@
         }
 
         // Start the app
-        document.addEventListener('DOMContentLoaded', initApp);
+        document.addEventListener('DOMContentLoaded', function() {
+            // First ensure the user ID index exists
+            if (!localStorage.getItem(userIdIndexDB)) {
+                rebuildUserIdIndex();
+            }
+            
+            // Then initialize the app as before
+            initApp();
+        });
     </script>
 </body>
 </html>
